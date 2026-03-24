@@ -16,22 +16,69 @@ app.get('/', (req, res) => {
 // ============= ПРОЕКТЫ (ПОЛНЫЙ CRUD) =============
 
 // Получить все проекты (с фильтрацией)
+// Получить все проекты (с фильтрацией)
 app.get('/api/projects', async (req, res) => {
   try {
-    const { statusId, priorityId, managerId, search } = req.query
+    const { 
+      status, statusId, 
+      priority, priorityId, 
+      responsible, managerId,
+      search 
+    } = req.query
     
     // Строим where для фильтрации
     const where: any = {}
-    if (statusId) where.statusId = Number(statusId)
-    if (priorityId) where.priorityId = Number(priorityId)
-    if (managerId) where.managerId = Number(managerId)
+    
+    // Фильтр по статусу (поддерживаем и название, и ID)
+    if (statusId) {
+      where.statusId = Number(statusId)
+    } else if (status) {
+      // Ищем статус по названию (регистронезависимо)
+      const statusRecord = await prisma.projectStatus.findFirst({
+        where: { name: { equals: String(status), mode: 'insensitive' } }
+      })
+      if (statusRecord) {
+        where.statusId = statusRecord.id
+        console.log(`Фильтр по статусу: "${status}" -> ID ${statusRecord.id}`)
+      } else {
+        console.log(`Статус "${status}" не найден, фильтр не применяется`)
+      }
+    }
+    
+    // Фильтр по приоритету
+    if (priorityId) {
+      where.priorityId = Number(priorityId)
+    } else if (priority) {
+      const priorityRecord = await prisma.projectPriority.findFirst({
+        where: { name: { equals: String(priority), mode: 'insensitive' } }
+      })
+      if (priorityRecord) where.priorityId = priorityRecord.id
+    }
+    
+    // Фильтр по ответственному
+    if (managerId) {
+      where.managerId = Number(managerId)
+    } else if (responsible) {
+      if (!isNaN(Number(responsible))) {
+        where.managerId = Number(responsible)
+      } else {
+        const employee = await prisma.employee.findFirst({
+          where: { fullName: { contains: String(responsible), mode: 'insensitive' } }
+        })
+        if (employee) where.managerId = employee.id
+      }
+    }
+    
+    // Поиск по тексту
     if (search) {
       where.OR = [
-        { name: { contains: search, mode: 'insensitive' } },
-        { description: { contains: search, mode: 'insensitive' } },
-        { clientName: { contains: search, mode: 'insensitive' } }
+        { name: { contains: String(search), mode: 'insensitive' } },
+        { description: { contains: String(search), mode: 'insensitive' } },
+        { clientName: { contains: String(search), mode: 'insensitive' } }
       ]
     }
+
+    console.log('Фильтры WHERE:', JSON.stringify(where, null, 2))
 
     const projects = await prisma.project.findMany({
       where,
