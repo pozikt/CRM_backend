@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team</title>
+        <link rel="icon" type="image/png" href="image/1768974434 1.png">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/project.css">
+    <link rel="stylesheet" href="css/employee.css">
+</head>
+
+<body>
+    <header class="header">
+        <div class="container header__container">
+            <div class="header__left">
+                <nav class="header__logo header__logo--with-gradient-hover">
+                    <a href="index.html"><img src="image/1768974434 1.png" alt="NIL IT CRM"></a>
+                    <span class="header__logo-label">Team</span>
+                </nav>
+            </div>
+            <div class="header__right">
+                <button type="button" class="btn-add-call" id="addEmployeePageBtn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>Add employee</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="employees-main">
+        <div class="container">
+            <div class="employees-grid" id="employeesGrid"></div>
+        </div>
+    </main>
+
+<div class="modal-overlay" id="employeeModal">
+    <div class="modal-content admin-modal">
+        <div class="modal-header">
+            <h2 class="modal-title" id="employeeModalTitle">Add employee</h2>
+            <button type="button" class="modal-close" id="closeEmployeeModalBtn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M18 6L6 18M6 6L18 18" stroke="#686B73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="employee-form-group">
+                <label for="empFullName">Full name</label>
+                <input type="text" id="empFullName" placeholder="Enter the ФИО" class="form-input">
+            </div>
+            <div class="employee-form-group">
+                <label>Role</label>
+                <div class="custom-select" id="roleSelect">
+                    <span class="custom-select__placeholder">Choosing a role</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M6 9L12 15L18 9" stroke="#686B73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <div class="custom-select__dropdown">
+                        <div class="custom-select__option" data-value="Developer">Developer</div>
+                        <div class="custom-select__option" data-value="Designer">Designer</div>
+                        <div class="custom-select__option" data-value="Manager">Manager</div>
+                        <div class="custom-select__option" data-value="Analyst">Analyst</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-cancel" id="cancelEmployeeBtn">Cancel</button>
+            <button type="button" class="btn-apply" id="saveEmployeeBtn">Save</button>
+        </div>
+    </div>
+</div>
+
+    <script src="dist/scripts/employee.js"></script>
+</body>
+
+</html>
