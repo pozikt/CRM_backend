@@ -4,13 +4,6 @@ dist/
 .env
 *.Zone.Identifier
 
-# Добавляем папки, которые не хотим отслеживать
-backend-employees-ceels/
-polina-backend/
-venv/
-__pycache__/
-*.pyc
-
 # Windows мусор
 Thumbs.db
 desktop.ini
