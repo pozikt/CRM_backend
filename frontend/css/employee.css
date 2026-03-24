@@ -1,0 +1,99 @@
+/* employee.css — стили для страницы сотрудников */
+
+.employees-main {
+    padding: 48px 0 80px;
+}
+
+.employees-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.employees-grid .project-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+}
+
+.employee-form-group {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.employee-form-group label {
+    display: block;
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.employee-form-group input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#roleSelect {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#roleSelect .custom-select__dropdown {
+    width: 100%;
+    box-sizing: border-box;
+    left: 0;
+    right: auto;
+}
+
+.employee-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.employee-actions button {
+    flex: 1;
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1px solid #e6e8ec;
+    background: #ffffff;
+    font-weight: 500;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.employee-actions .btn-edit-employee {
+    color: #686B73;
+}
+
+.employee-actions .btn-edit-employee:hover {
+    border-color: #C05BF0;
+    color: #C05BF0;
+}
+
+.employee-actions .btn-delete-employee {
+    color: #f44336;
+}
+
+.employee-actions .btn-delete-employee:hover {
+    border-color: #f44336;
+    color: #f44336;
+}
+
+.modal-content {
+    overflow: visible !important;
+}
+
+.modal-content .modal-body {
+    overflow: visible !important;
+    padding: 24px 32px;
+}
+
+textarea.form-input {
+    width: 100%;
+    box-sizing: border-box;
+    font-family: inherit;
+}

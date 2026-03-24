@@ -1,0 +1,54 @@
+services:
+  # 🗄️ База данных PostgreSQL
+  db:
+    image: postgres:15-alpine
+    container_name: crm-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: crm_user
+      POSTGRES_PASSWORD: crm_password
+      POSTGRES_DB: crm_db
+    ports:
+      - "5432:5432"  # для отладки, можно убрать в продакшене
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U crm_user -d crm_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ⚙️ Бэкенд (Node.js + Express + Prisma)
+  backend:
+    build:
+      context: .  # текущая папка (где лежит Dockerfile)
+      dockerfile: Dockerfile
+    container_name: crm-backend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://crm_user:crm_password@db:5432/crm_db
+      JWT_SECRET: your-secret-key-change-in-prod
+      PORT: 3000
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/app  # монтируем исходный код для hot-reload в dev-режиме
+      - /app/node_modules  # изолируем node_modules внутри контейнера
+    command: sh -c "npx prisma migrate deploy && node prisma/seed.js && npm run dev"
+
+  # 🌐 Фронтенд (простой статический сервер)
+  frontend:
+    build:
+      context: ./frontend     # Папка фронтенда
+      dockerfile: Dockerfile  # Новый файл внутри frontend/
+    container_name: crm-frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
