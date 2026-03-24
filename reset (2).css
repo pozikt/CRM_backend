@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIL IT CRM</title>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/normalize.css">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <header class="header">
+        <div class="container header__container">
+            <div class="header__left">
+                <a href="#" class="header__logo">
+                    <img src="/image/1768974434 1.png" alt="NIL IT CRM">
+                    NIL IT
+                </a>
+                <div class="header__vertical-line"></div>
+                <nav class="header__nav">
+                    <a href="#projects" class="nav__link">Projects</a>
+                    <a href="#" class="nav__link">Team (Employees)</a>
+                </nav>
+            </div>
+            <div class="header__right">
+                <button class="btn__log">Admin panel</button>
+                <button type="button" class="btn__reg">Search</button>
+            </div>
+        </div>
+    </header>
+    <main class="main-content">
+        <div class="container main__container" id="projects">
+
+            <div class="section-header">
+                <h1 class="section-title">
+                    Types of <span class="text-gradient">projects</span>
+                </h1>
+                <button class="btn-filter">Filters</button>
+            </div>
+
+            <div class="carousel-wrapper">
+                <button class="carousel-btn carousel-btn--left">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M15 19L8 12L15 5" stroke="#E6E8EC" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                </button>
+
+                <div class="projects-grid">
+                    <!-- Card 1 -->
+                    <a class="project-card" href="/project.html">
+                        <h3 class="card-title text-gradient">Project</h3>
+                        <div class="card-body">
+                            <div class="card-row">
+                                <span class="label">Status</span>
+                                <span class="pill">Choosing a status</span>
+                            </div>
+                            <div class="card-row">
+                                <span class="label">Priority</span>
+                                <span class="pill">Choosing a priority</span>
+                            </div>
+                            <div class="card-row">
+                                <span class="label">Responsible</span>
+                                <span class="pill">Choosing a responsible</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Card 2 -->
+                    <a class="project-card" href="/project.html">
+                        <h3 class="card-title text-gradient">Project</h3>
+                        <div class="card-body">
+                            <div class="card-row">
+                                <span class="label">Status</span>
+                                <span class="pill">Choosing a status</span>
+                            </div>
+                            <div class="card-row">
+                                <span class="label">Priority</span>
+                                <span class="pill">Choosing a priority</span>
+                            </div>
+                            <div class="card-row">
+                                <span class="label">Responsible</span>
+                                <span class="pill">Choosing a responsible</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Card 3 -->
+                    <a class="project-card" href="/project.html">
+                        <h3 class="card-title text-gradient">Project</h3>
+                        <div class="card-body">
+                            <div class="card-row">
+                                <span class="label">Status</span>
+                                <span class="pill">Choosing a status</span>
+                            </div>
+                            <div class="card-row">
+                                <span class="label">Priority</span>
+                                <span class="pill">Choosing a priority</span>
+                            </div>
+                            <div class="card-row">
+                                <span class="label">Responsible</span>
+                                <span class="pill">Choosing a responsible</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Card 4 -->
+                    <a class="project-card" href="/project.html">
+                        <h3 class="card-title text-gradient">Project</h3>
+                        <div class="card-body">
+                            <div class="card-row">
+                                <span class="label">Status</span>
+                                <span class="pill">Choosing a status</span>
+                            </div>
+                            <div class="card-row">
+                                <span class="label">Priority</span>
+                                <span class="pill">Choosing a priority</span>
+                            </div>
+                            <div class="card-row">
+                                <span class="label">Responsible</span>
+                                <span class="pill">Choosing a responsible</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Card 5 -->
+                    <a class="project-card" href="/project.html">
+                        <h3 class="card-title text-gradient">Project</h3>
+                        <div class="card-body">
+                            <div class="card-row">
+                                <span class="label">Status</span>
+                                <span class="pill">Choosing a status</span>
+                            </div>
+                            <div class="card-row">
+                                <span class="label">Priority</span>
+                                <span class="pill">Choosing a priority</span>
+                            </div>
+                            <div class="card-row">
+                                <span class="label">Responsible</span>
+                                <span class="pill">Choosing a responsible</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Card 6 -->
+                    <a class="project-card" href="/project.html">
+                        <h3 class="card-title text-gradient">Project</h3>
+                        <div class="card-body">
+                            <div class="card-row">
+                                <span class="label">Status</span>
+                                <span class="pill">Choosing a status</span>
+                            </div>
+                            <div class="card-row">
+                                <span class="label">Priority</span>
+                                <span class="pill">Choosing a priority</span>
+                            </div>
+                            <div class="card-row">
+                                <span class="label">Responsible</span>
+                                <span class="pill">Choosing a responsible</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <button class="carousel-btn carousel-btn--right">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9 5L16 12L9 19" stroke="#E6E8EC" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </main>
+<!-- Filter Modal -->
+<div class="modal-overlay" id="filterModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">Filters</h2>
+            <button class="modal-close" id="modalCloseBtn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18 6L6 18M6 6L18 18" stroke="#686B73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="filter-group">
+                <label class="filter-label">By status</label>
+                <div class="filter-selector" data-filter="status">
+                    <span class="filter-placeholder">Choosing a status</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6 9L12 15L18 9" stroke="#686B73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="filter-dropdown" id="statusDropdown">
+                    <label class="filter-option">
+                        <input type="checkbox" name="status" value="active">
+                        <span class="checkbox-custom"></span>
+                        <span>Active</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" name="status" value="pending">
+                        <span class="checkbox-custom"></span>
+                        <span>Pending</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" name="status" value="completed">
+                        <span class="checkbox-custom"></span>
+                        <span>Completed</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" name="status" value="archived">
+                        <span class="checkbox-custom"></span>
+                        <span>Archived</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <label class="filter-label">By priority</label>
+                <div class="filter-selector" data-filter="priority">
+                    <span class="filter-placeholder">Choosing a priority</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6 9L12 15L18 9" stroke="#686B73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="filter-dropdown" id="priorityDropdown">
+                    <label class="filter-option">
+                        <input type="checkbox" name="priority" value="high">
+                        <span class="checkbox-custom"></span>
+                        <span>High</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" name="priority" value="medium">
+                        <span class="checkbox-custom"></span>
+                        <span>Medium</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" name="priority" value="low">
+                        <span class="checkbox-custom"></span>
+                        <span>Low</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <label class="filter-label">Responsible</label>
+                <div class="filter-selector" data-filter="responsible">
+                    <span class="filter-placeholder">Choosing a responsible</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6 9L12 15L18 9" stroke="#686B73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="filter-dropdown" id="responsibleDropdown">
+                    <label class="filter-option">
+                        <input type="checkbox" name="responsible" value="team1">
+                        <span class="checkbox-custom"></span>
+                        <span>Team 1</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" name="responsible" value="team2">
+                        <span class="checkbox-custom"></span>
+                        <span>Team 2</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" name="responsible" value="team3">
+                        <span class="checkbox-custom"></span>
+                        <span>Team 3</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel" id="modalCancelBtn">Cancel</button>
+            <button class="btn-apply" id="modalApplyBtn">Apply</button>
+        </div>
+    </div>
+</div>
+<!-- Admin Panel Modal -->
+<div class="modal-overlay" id="adminModal">
+    <div class="modal-content admin-modal">
+        <div class="modal-header">
+            <h2 class="modal-title">Admin panel</h2>
+            <button class="modal-close" id="adminModalCloseBtn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18 6L6 18M6 6L18 18" stroke="#686B73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="admin-section">
+                <h3 class="admin-section-title">For projects</h3>
+                <div class="admin-buttons">
+                    <button class="admin-btn">
+                        <span>Add a project</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 5V19M5 12H19" stroke="#686B73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <button class="admin-btn">
+                        <span>Export</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15M7 10L12 15M12 15L17 10M12 15V3" stroke="#686B73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="admin-section">
+                <h3 class="admin-section-title">For employees</h3>
+                <div class="admin-buttons">
+                    <button class="admin-btn">
+                        <span>Add an employee</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z" stroke="#686B73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <button class="admin-btn">
+                        <span>Edit an employee</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M11 4H4C3.46957 4 2.96086 4.21071 2.58579 4.58579C2.21071 4.96086 2 5.46957 2 6V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V13M18.5 2.5C18.8978 2.10217 19.4374 1.87868 20 1.87868C20.5626 1.87868 21.1022 2.10217 21.5 2.5C21.8978 2.89782 22.1213 3.43739 22.1213 4C22.1213 4.56261 21.8978 5.10217 21.5 5.5L12 15L8 16L9 12L18.5 2.5Z" stroke="#686B73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Попап входа/регистрации -->
+<div class="popup-overlay hidden" id="popupOverlay">
+    <div class="popup-container">
+        <button class="close-btn" id="closePopupBtn">&times;</button>
+       
+        <h2 id="popup-title" class="sr-only">Добро пожаловать!</h2>
+        <p id="popup-desc" class="sr-only">Войдите, чтобы продолжить</p>
+
+        <div id="loginScreen" class="form-screen">
+            <h2>Добро пожаловать!</h2>
+            <p class="subtitle">Войдите, чтобы продолжить</p>
+            <div id="loginError" class="error-message hidden"></div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email или логин</label>
+                    <input type="text" id="email" name="email" placeholder="example@mail.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Пароль</label>
+                    <input type="password" id="password" name="password" placeholder="••••••••" required>
+                </div>
+                <div class="form-options">
+                    <label class="remember">
+                        <input type="checkbox" id="remember"> Запомнить меня
+                    </label>
+                    <a href="#" class="forgot-link" id="forgotLink">Забыли пароль?</a>
+                </div>
+                <button type="submit" class="login-submit" id="loginSubmitBtn">Войти</button>
+            </form>
+            <div class="register-link">
+                Нет аккаунта?
+                <a href="#" id="registerLink">Зарегистрироваться</a>
+            </div>
+        </div>
+
+        <div id="registerScreen" class="form-screen hidden">
+            <h2>Создать аккаунт</h2>
+            <p class="subtitle">Заполните данные для регистрации</p>
+            <div id="registerError" class="error-message hidden"></div>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="regName">Имя</label>
+                    <input type="text" id="regName" placeholder="Иван Петров" required>
+                </div>
+                <div class="form-group">
+                    <label for="regEmail">Email</label>
+                    <input type="email" id="regEmail" placeholder="example@mail.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="regPassword">Пароль</label>
+                    <input type="password" id="regPassword" placeholder="минимум 6 символов" required>
+                </div>
+                <div class="form-group">
+                    <label for="regConfirm">Подтверждение пароля</label>
+                    <input type="password" id="regConfirm" placeholder="повторите пароль" required>
+                </div>
+                <button type="submit" class="login-submit" id="registerSubmitBtn">Зарегистрироваться</button>
+            </form>
+            <div class="register-link">
+                <a href="#" id="backToLoginFromRegister">← Вернуться ко входу</a>
+            </div>
+        </div>
+
+        <div id="forgotScreen" class="form-screen hidden">
+            <h2>Восстановление пароля</h2>
+            <p class="subtitle">Мы отправим ссылку на ваш email</p>
+            <div id="forgotError" class="error-message hidden"></div>
+            <form id="forgotForm">
+                <div class="form-group">
+                    <label for="forgotEmail">Email</label>
+                    <input type="email" id="forgotEmail" placeholder="example@mail.com" required>
+                </div>
+                <button type="submit" class="login-submit" id="forgotSubmitBtn">Отправить</button>
+            </form>
+            <div class="register-link">
+                <a href="#" id="backToLoginFromForgot">← Вернуться ко входу</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/dist/scripts/filter-modal.js"></script>
+<script src="/dist/scripts/admin-modal.js"></script>
+<script src="/dist/scripts/auth-modal.js"></script>
+<div id="notification" class="notification hidden"></div>
+</body>
+
+</html>

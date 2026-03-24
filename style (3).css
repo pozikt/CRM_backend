@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project</title>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/normalize.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/project.css">
+</head>
+
+<body>
+    <header class="header">
+        <div class="container header__container">
+            <div class="header__left">
+                <a href="/index.html" class="header__logo header__logo--with-gradient-hover">
+                    <img src="/image/1768974434 1.png" alt="NIL IT CRM">
+                    <span class="header__logo-label">Project</span>
+                </a>
+            </div>
+            <div class="header__right">
+                <button type="button" class="btn-edit-project js-edit-project-toggle" id="editProjectBtn">Edit the project</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="project-detail" id="projectDetail" data-edit-mode="false">
+        <div class="container project-detail__container">
+            <!-- Project Overview -->
+            <section class="project-overview">
+                <div class="form-row form-row--overview">
+                    <div class="form-field form-field--edit-trigger">
+                        <label class="form-label">Project</label>
+                        <button type="button" class="btn-edit-project btn-edit-project--in-form js-edit-project-toggle" id="editProjectBtnForm">Edit the project</button>
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">№ Contract</label>
+                        <input type="text" class="form-input" placeholder="Enter the number">
+                    </div>
+                    <div class="form-field form-field--dropdown">
+                        <label class="form-label">Type</label>
+                        <div class="custom-select" data-select="type">
+                            <span class="custom-select__placeholder">Choosing a type</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                <path d="M6 9L12 15L18 9" stroke="#686B73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <div class="custom-select__dropdown">
+                                <div class="custom-select__option" data-value="web">Web</div>
+                                <div class="custom-select__option" data-value="mobile">Mobile</div>
+                                <div class="custom-select__option" data-value="desktop">Desktop</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-field form-field--dropdown">
+                        <label class="form-label">Status</label>
+                        <div class="custom-select" data-select="status">
+                            <span class="custom-select__placeholder">Choosing a status</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                <path d="M6 9L12 15L18 9" stroke="#686B73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <div class="custom-select__dropdown">
+                                <div class="custom-select__option" data-value="active">Active</div>
+                                <div class="custom-select__option" data-value="pending">Pending</div>
+                                <div class="custom-select__option" data-value="completed">Completed</div>
+                                <div class="custom-select__option" data-value="archived">Archived</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">Start date</label>
+                        <input type="text" class="form-input" placeholder="дд.мм.гггг">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">Deadline</label>
+                        <input type="text" class="form-input" placeholder="дд.мм.гггг">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">Completion date</label>
+                        <input type="text" class="form-input" placeholder="дд.мм.гггг">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Two columns: Project statuses + Employee -->
+            <section class="project-sections">
+                <div class="project-statuses">
+                    <h2 class="section-heading text-gradient">Project statuses</h2>
+                    <div class="status-list">
+                        <div class="status-item">
+                            <span class="status-name">Аналитика и прототипирование</span>
+                            <div class="status-dates">
+                                <div class="status-date-field">
+                                    <label>Start date</label>
+                                    <input type="text" placeholder="дд.мм.гггг">
+                                </div>
+                                <div class="status-date-field">
+                                    <label>Completion date</label>
+                                    <input type="text" placeholder="дд.мм.гггг">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-name">Составление ТЗ</span>
+                            <div class="status-dates">
+                                <div class="status-date-field">
+                                    <label>Start date</label>
+                                    <input type="text" placeholder="дд.мм.гггг">
+                                </div>
+                                <div class="status-date-field">
+                                    <label>Completion date</label>
+                                    <input type="text" placeholder="дд.мм.гггг">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-name">Разработка дизайна</span>
+                            <div class="status-dates">
+                                <div class="status-date-field">
+                                    <label>Start date</label>
+                                    <input type="text" placeholder="дд.мм.гггг">
+                                </div>
+                                <div class="status-date-field">
+                                    <label>Completion date</label>
+                                    <input type="text" placeholder="дд.мм.гггг">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-name">Согласование дизайна</span>
+                            <div class="status-dates">
+                                <div class="status-date-field">
+                                    <label>Start date</label>
+                                    <input type="text" placeholder="дд.мм.гггг">
+                                </div>
+                                <div class="status-date-field">
+                                    <label>Completion date</label>
+                                    <input type="text" placeholder="дд.мм.гггг">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-name">Разработка</span>
+                            <div class="status-dates">
+                                <div class="status-date-field">
+                                    <label>Start date</label>
+                                    <input type="text" placeholder="дд.мм.гггг">
+                                </div>
+                                <div class="status-date-field">
+                                    <label>Completion date</label>
+                                    <input type="text" placeholder="дд.мм.гггг">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-name">Тестирование</span>
+                            <div class="status-dates">
+                                <div class="status-date-field">
+                                    <label>Start date</label>
+                                    <input type="text" placeholder="дд.мм.гггг">
+                                </div>
+                                <div class="status-date-field">
+                                    <label>Completion date</label>
+                                    <input type="text" placeholder="дд.мм.гггг">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-name">Согласование разработки</span>
+                            <div class="status-dates">
+                                <div class="status-date-field">
+                                    <label>Start date</label>
+                                    <input type="text" placeholder="дд.мм.гггг">
+                                </div>
+                                <div class="status-date-field">
+                                    <label>Completion date</label>
+                                    <input type="text" placeholder="дд.мм.гггг">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-name">Готово к сдаче</span>
+                            <div class="status-dates">
+                                <div class="status-date-field">
+                                    <label>Start date</label>
+                                    <input type="text" placeholder="дд.мм.гггг">
+                                </div>
+                                <div class="status-date-field">
+                                    <label>Completion date</label>
+                                    <input type="text" placeholder="дд.мм.гггг">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-right-column">
+                    <div class="employee-list" id="employeeList">
+                        <article class="employee-card">
+                            <h2 class="section-heading text-gradient employee-card__title">Employee</h2>
+                            <div class="employee-block">
+                                <div class="form-field">
+                                    <label class="form-label">ФИО</label>
+                                    <input type="text" class="form-input" placeholder="Enter the ФИО">
+                                </div>
+                                <div class="form-field form-field--dropdown">
+                                    <label class="form-label">Role</label>
+                                    <div class="custom-select" data-select="role1">
+                                        <span class="custom-select__placeholder">Choosing a role</span>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                            <path d="M6 9L12 15L18 9" stroke="#686B73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        <div class="custom-select__dropdown">
+                                            <div class="custom-select__option" data-value="developer">Developer</div>
+                                            <div class="custom-select__option" data-value="designer">Designer</div>
+                                            <div class="custom-select__option" data-value="manager">Manager</div>
+                                            <div class="custom-select__option" data-value="analyst">Analyst</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                        <article class="employee-card">
+                            <h2 class="section-heading text-gradient employee-card__title">Employee</h2>
+                            <div class="employee-block">
+                                <div class="form-field">
+                                    <label class="form-label">ФИО</label>
+                                    <input type="text" class="form-input" placeholder="Enter the ФИО">
+                                </div>
+                                <div class="form-field form-field--dropdown">
+                                    <label class="form-label">Role</label>
+                                    <div class="custom-select" data-select="role2">
+                                        <span class="custom-select__placeholder">Choosing a role</span>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                            <path d="M6 9L12 15L18 9" stroke="#686B73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        <div class="custom-select__dropdown">
+                                            <div class="custom-select__option" data-value="developer">Developer</div>
+                                            <div class="custom-select__option" data-value="designer">Designer</div>
+                                            <div class="custom-select__option" data-value="manager">Manager</div>
+                                            <div class="custom-select__option" data-value="analyst">Analyst</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                        <article class="employee-card">
+                            <h2 class="section-heading text-gradient employee-card__title">Employee</h2>
+                            <div class="employee-block">
+                                <div class="form-field">
+                                    <label class="form-label">ФИО</label>
+                                    <input type="text" class="form-input" placeholder="Enter the ФИО">
+                                </div>
+                                <div class="form-field form-field--dropdown">
+                                    <label class="form-label">Role</label>
+                                    <div class="custom-select" data-select="role3">
+                                        <span class="custom-select__placeholder">Choosing a role</span>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                            <path d="M6 9L12 15L18 9" stroke="#686B73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        <div class="custom-select__dropdown">
+                                            <div class="custom-select__option" data-value="developer">Developer</div>
+                                            <div class="custom-select__option" data-value="designer">Designer</div>
+                                            <div class="custom-select__option" data-value="manager">Manager</div>
+                                            <div class="custom-select__option" data-value="analyst">Analyst</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                    <button type="button" class="btn-add-call btn-add-employee" id="addEmployeeBtn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>Add employee</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Calls: полная ширина под колонками -->
+            <section class="calls-section calls-section--full">
+                <h2 class="section-heading text-gradient">Calls</h2>
+                <div class="calls-table">
+                    <div class="calls-header">
+                        <div class="calls-col calls-col--date">Date and time</div>
+                        <div class="calls-col calls-col--link">Link to the recording/results of the call</div>
+                    </div>
+                    <div class="calls-body" id="callsBody">
+                        <div class="calls-row">
+                            <input type="text" class="form-input calls-input--date" placeholder="дд.мм.гг/чч:мм">
+                            <input type="text" class="form-input calls-input--link" placeholder="Insert the link and enter the results after completion">
+                        </div>
+                        <div class="calls-row">
+                            <input type="text" class="form-input calls-input--date" placeholder="дд.мм.гг/чч:мм">
+                            <input type="text" class="form-input calls-input--link" placeholder="Insert the link and enter the results after completion">
+                        </div>
+                        <div class="calls-row">
+                            <input type="text" class="form-input calls-input--date" placeholder="дд.мм.гг/чч:мм">
+                            <input type="text" class="form-input calls-input--link" placeholder="Insert the link and enter the results after completion">
+                        </div>
+                    </div>
+                </div>
+                <button class="btn-add-call" id="addCallBtn" type="button">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>Add Call</span>
+                </button>
+            </section>
+        </div>
+    </main>
+
+    <template id="employeeCardTemplate">
+        <article class="employee-card">
+            <h2 class="section-heading text-gradient employee-card__title">Employee</h2>
+            <div class="employee-block">
+                <div class="form-field">
+                    <label class="form-label">ФИО</label>
+                    <input type="text" class="form-input" placeholder="Enter the ФИО">
+                </div>
+                <div class="form-field form-field--dropdown">
+                    <label class="form-label">Role</label>
+                    <div class="custom-select" data-select="role0">
+                        <span class="custom-select__placeholder">Choosing a role</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <path d="M6 9L12 15L18 9" stroke="#686B73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <div class="custom-select__dropdown">
+                            <div class="custom-select__option" data-value="developer">Developer</div>
+                            <div class="custom-select__option" data-value="designer">Designer</div>
+                            <div class="custom-select__option" data-value="manager">Manager</div>
+                            <div class="custom-select__option" data-value="analyst">Analyst</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </template>
+
+    <script src="/dist/scripts/project.js"></script>
+</body>
+
+</html>
