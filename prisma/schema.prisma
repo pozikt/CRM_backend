@@ -1,0 +1,137 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Справочник приоритетов
+model ProjectPriority {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  order     Int?
+  color     String?
+  projects  Project[]
+
+  @@map("project_priorities")
+}
+
+// Справочник статусов проектов
+model ProjectStatus {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  isDefault Boolean   @default(false)
+  projects  Project[]
+
+  @@map("project_statuses")
+}
+
+// Сотрудники (Команда)
+model Employee {
+  id        Int       @id @default(autoincrement())
+  fullName  String    @map("full_name")
+  role      String
+  telegram  String?
+  email     String?   @unique
+  isActive  Boolean   @default(true) @map("is_active")
+  notes     String?
+  userId    Int?      @unique @map("user_id")
+  user      User?     @relation(fields: [userId], references: [id])
+
+  managedProjects Project[] @relation("ManagerProjects")
+  meetings        MeetingParticipants[]
+
+  @@map("employees")
+}
+
+// Пользователи (учётные записи)
+model User {
+  id           Int       @id @default(autoincrement())
+  email        String    @unique
+  passwordHash String    @map("password_hash")
+  role         String    @default("user")
+  lastLogin    DateTime? @map("last_login")
+  isActive     Boolean   @default(true) @map("is_active")
+  employee     Employee?
+
+  @@map("users")
+}
+
+// Проекты (главная таблица)
+model Project {
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String?
+
+  statusId    Int       @map("status_id")
+  status      ProjectStatus @relation(fields: [statusId], references: [id])
+  
+  priorityId  Int       @map("priority_id")
+  priority    ProjectPriority @relation(fields: [priorityId], references: [id])
+  
+  managerId   Int?      @map("manager_id")
+  manager     Employee? @relation("ManagerProjects", fields: [managerId], references: [id])
+
+  startDate      DateTime? @map("start_date")
+  deadlineDate   DateTime? @map("deadline_date")
+  actualStartDate DateTime? @map("actual_start_date")
+  actualEndDate   DateTime? @map("actual_end_date")
+
+  budget        Float?
+  spentHours    Int?      @map("spent_hours")
+  progress      Int?      @default(0)
+
+  clientName    String?   @map("client_name")
+  clientContact String?   @map("client_contact")
+  tags          String?
+
+  meetings      Meeting[]
+  
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  @@map("projects")
+}
+
+// Встречи (созвоны)
+model Meeting {
+  id              Int       @id @default(autoincrement())
+  title           String
+  scheduledDateTime DateTime  @map("scheduled_datetime")
+  actualDateTime  DateTime? @map("actual_datetime")
+  status          String    @default("planned")
+  meetingLink     String?   @map("meeting_link")
+  notes           String?
+
+  projectId       Int       @map("project_id")
+  project         Project   @relation(fields: [projectId], references: [id])
+
+  participants    MeetingParticipants[]
+
+  createdAt       DateTime  @default(now()) @map("created_at")
+
+  @@map("meetings")
+}
+
+// Связующая таблица: Встречи <-> Сотрудники (участники)
+model MeetingParticipants {
+  id          Int      @id @default(autoincrement())
+  meetingId   Int      @map("meeting_id")
+  meeting     Meeting  @relation(fields: [meetingId], references: [id])
+  employeeId  Int      @map("employee_id")
+  employee    Employee @relation(fields: [employeeId], references: [id])
+
+  @@unique([meetingId, employeeId])
+  @@map("meeting_participants")
+}
+
+// Тестовая модель (можно удалить потом)
+model Test {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+}
