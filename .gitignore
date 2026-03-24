@@ -1,5 +1,22 @@
-node_modules
-# Keep environment variables out of version control
+# Уже должны быть
+node_modules/
+dist/
 .env
+*.Zone.Identifier
 
-/generated/prisma
+# Добавляем папки, которые не хотим отслеживать
+backend-employees-ceels/
+polina-backend/
+venv/
+__pycache__/
+*.pyc
+
+# Windows мусор
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
