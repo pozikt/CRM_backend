@@ -341,6 +341,32 @@ app.put('/api/employees/:id', async (req, res) => {
   }
 })
 
+app.delete('/api/employees/:id', async (req, res) => {
+  try {
+    const { id } = req.params
+    
+    // Проверяем, существует ли сотрудник
+    const employee = await prisma.employee.findUnique({
+      where: { id: Number(id) }
+    })
+    
+    if (!employee) {
+      return res.status(404).json({ error: 'Сотрудник не найден' })
+    }
+    
+    // Удаляем сотрудника (мягкое удаление через isActive)
+    await prisma.employee.update({
+      where: { id: Number(id) },
+      data: { isActive: false }
+    })
+    
+    res.json({ success: true, message: 'Сотрудник удалён' })
+  } catch (error) {
+    console.error('Ошибка удаления сотрудника:', error)
+    res.status(500).json({ error: 'Ошибка при удалении сотрудника' })
+  }
+})
+
 // ============= ВСТРЕЧИ =============
 
 // Получить все встречи
