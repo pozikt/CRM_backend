@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from app.models.call import Call
-from app.schemas.call import CallCreate, CallUpdate
+from models.call import Call
+from schemas.call import CallCreate, CallUpdate
 
 def get_calls(db: Session, skip: int = 0, limit: int = 100):
     return db.query(Call).order_by(Call.scheduled_datetime.desc()).offset(skip).limit(limit).all()

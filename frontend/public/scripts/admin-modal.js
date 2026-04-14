@@ -1,61 +1,62 @@
-// scripts/admin-modal.ts
+// admin-modal.js
 
 class AdminModal {
-    private modalOverlay: HTMLElement;
-    private openBtn: HTMLElement;
-    private closeBtn: HTMLElement;
+    modalOverlay;
+    openBtn;
+    closeBtn;
 
     constructor() {
         const modal = document.getElementById('adminModal');
-        if (!modal) throw new Error('Admin modal element not found');
+        if (!modal) {
+            console.warn('AdminModal: modal not found, skipping');
+            return;
+        }
         this.modalOverlay = modal;
 
         const openButton = document.querySelector('.btn__log');
-        if (!openButton) throw new Error('Admin panel button not found');
-        this.openBtn = openButton as HTMLElement;
+        if (!openButton) {
+            console.warn('AdminModal: open button not found, skipping');
+            return;
+        }
+        this.openBtn = openButton;
 
         const closeButton = document.getElementById('adminModalCloseBtn');
-        if (!closeButton) throw new Error('Admin modal close button not found');
+        if (!closeButton) {
+            console.warn('AdminModal: close button not found, skipping');
+            return;
+        }
         this.closeBtn = closeButton;
 
         this.init();
     }
 
-    private init(): void {
+    init() {
         this.openBtn.addEventListener('click', () => this.open());
         this.closeBtn.addEventListener('click', () => this.close());
 
-        // Закрытие по клику на оверлей
-        this.modalOverlay.addEventListener('click', (e: MouseEvent) => {
-            if (e.target === this.modalOverlay) {
-                this.close();
-            }
+        this.modalOverlay.addEventListener('click', (e) => {
+            if (e.target === this.modalOverlay) this.close();
         });
 
-        // Закрытие по Escape
-        document.addEventListener('keydown', (e: KeyboardEvent) => {
+        document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && this.modalOverlay.classList.contains('modal-active')) {
                 this.close();
             }
         });
 
-        // Инициализация кнопок действий
         this.initActionButtons();
     }
 
-    private initActionButtons(): void {
+    initActionButtons() {
         const addProjectBtn = Array.from(document.querySelectorAll('.admin-btn')).find(
             btn => btn.textContent?.includes('Add a project')
         );
-        
         const exportBtn = Array.from(document.querySelectorAll('.admin-btn')).find(
             btn => btn.textContent?.includes('Export')
         );
-        
         const addEmployeeBtn = Array.from(document.querySelectorAll('.admin-btn')).find(
             btn => btn.textContent?.includes('Add an employee')
         );
-        
         const editEmployeeBtn = Array.from(document.querySelectorAll('.admin-btn')).find(
             btn => btn.textContent?.includes('Edit an employee')
         );
@@ -66,44 +67,37 @@ class AdminModal {
                 window.location.assign('project.html');
             });
         }
-
         if (exportBtn) {
             exportBtn.addEventListener('click', () => {
                 console.log('Export clicked');
                 this.close();
-                // Здесь будет логика экспорта
             });
         }
-
         if (addEmployeeBtn) {
             addEmployeeBtn.addEventListener('click', () => {
                 console.log('Add employee clicked');
                 this.close();
-                // Здесь будет логика добавления сотрудника
             });
         }
-
         if (editEmployeeBtn) {
             editEmployeeBtn.addEventListener('click', () => {
                 console.log('Edit employee clicked');
                 this.close();
-                // Здесь будет логика редактирования сотрудника
             });
         }
     }
 
-    private open(): void {
+    open() {
         this.modalOverlay.classList.add('modal-active');
         document.body.style.overflow = 'hidden';
     }
 
-    private close(): void {
+    close() {
         this.modalOverlay.classList.remove('modal-active');
         document.body.style.overflow = '';
     }
 }
 
-// Инициализация при загрузке DOM
 document.addEventListener('DOMContentLoaded', () => {
     try {
         new AdminModal();

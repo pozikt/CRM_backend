@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
-from app.database import get_db
-from app.models.call import Call
-from app.schemas.call import CallCreate, CallUpdate, CallOut
+from core.database import get_db
+from models.call import Call
+from schemas.call import CallCreate, CallUpdate, CallOut
 
 router = APIRouter(prefix="/api/v1/calls", tags=["Calls"])
 

@@ -1,0 +1,36 @@
+crm_frontend  | /docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration
+crm_db  | 
+crm_db        | PostgreSQL Database directory appears to contain a database; Skipping initialization
+crm_db        | 
+crm_frontend  | /docker-entrypoint.sh: Looking for shell scripts in /docker-entrypoint.d/
+crm_frontend  | /docker-entrypoint.sh: Launching /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh
+crm_frontend  | 10-listen-on-ipv6-by-default.sh: info: Getting the checksum of /etc/nginx/conf.d/default.conf
+crm_frontend  | 10-listen-on-ipv6-by-default.sh: info: /etc/nginx/conf.d/default.conf differs from the packaged version
+crm_frontend  | /docker-entrypoint.sh: Sourcing /docker-entrypoint.d/15-local-resolvers.envsh
+crm_frontend  | /docker-entrypoint.sh: Launching /docker-entrypoint.d/20-envsubst-on-templates.sh
+crm_frontend  | /docker-entrypoint.sh: Launching /docker-entrypoint.d/30-tune-worker-processes.sh
+crm_db        | 2026-04-14 07:06:05.610 UTC [1] LOG:  starting PostgreSQL 15.17 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+crm_db        | 2026-04-14 07:06:05.610 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+crm_frontend  | /docker-entrypoint.sh: Configuration complete; ready for start up
+crm_frontend  | 2026/04/14 07:06:16 [notice] 1#1: using the "epoll" event method
+crm_db        | 2026-04-14 07:06:05.610 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+crm_db        | 2026-04-14 07:06:05.631 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+crm_db        | 2026-04-14 07:06:05.655 UTC [28] LOG:  database system was shut down at 2026-04-14 07:05:56 UTC
+crm_frontend  | 2026/04/14 07:06:16 [notice] 1#1: nginx/1.29.8
+crm_frontend  | 2026/04/14 07:06:16 [notice] 1#1: built by gcc 15.2.0 (Alpine 15.2.0) 
+crm_db        | 2026-04-14 07:06:05.662 UTC [1] LOG:  database system is ready to accept connections
+crm_frontend  | 2026/04/14 07:06:16 [notice] 1#1: OS: Linux 6.6.87.2-microsoft-standard-WSL2
+crm_frontend  | 2026/04/14 07:06:16 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+crm_frontend  | 2026/04/14 07:06:16 [notice] 1#1: start worker processes
+crm_frontend  | 2026/04/14 07:06:16 [notice] 1#1: start worker process 29
+crm_frontend  | 2026/04/14 07:06:16 [notice] 1#1: start worker process 30
+crm_frontend  | 2026/04/14 07:06:16 [notice] 1#1: start worker process 31
+crm_frontend  | 2026/04/14 07:06:16 [notice] 1#1: start worker process 32
+crm_frontend  | 2026/04/14 07:06:16 [notice] 1#1: start worker process 33
+crm_frontend  | 2026/04/14 07:06:16 [notice] 1#1: start worker process 34
+crm_backend   | Waiting for PostgreSQL...
+crm_backend   | Starting FastAPI...
+crm_backend   | INFO:     Started server process [8]
+crm_backend   | INFO:     Waiting for application startup.
+crm_backend   | INFO:     Application startup complete.
+crm_backend   | INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)

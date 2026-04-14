@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, DateTime
-from app.database import Base
+from core.database import Base
 
 class Call(Base):
     __tablename__ = "calls"

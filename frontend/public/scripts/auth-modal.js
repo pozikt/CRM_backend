@@ -1,152 +1,106 @@
-// scripts/auth-modal.ts
-
-interface ScreenElements {
-    login: HTMLElement;
-    register: HTMLElement;
-    forgot: HTMLElement;
-}
-
-interface ErrorContainers {
-    login: HTMLElement;
-    register: HTMLElement;
-    forgot: HTMLElement;
-}
+// auth-modal.js
 
 class AuthModal {
-    // Используем ! для указания, что свойства будут инициализированы позже
-    private overlay!: HTMLElement;
-    private closeBtn!: HTMLElement;
-    private screens!: ScreenElements;
-    private errors!: ErrorContainers;
-    
-    private loginForm!: HTMLFormElement;
-    private emailInput!: HTMLInputElement;
-    private passwordInput!: HTMLInputElement;
-    private loginSubmitBtn!: HTMLButtonElement;
-    
-    private registerForm!: HTMLFormElement;
-    private regName!: HTMLInputElement;
-    private regEmail!: HTMLInputElement;
-    private regPassword!: HTMLInputElement;
-    private regConfirm!: HTMLInputElement;
-    private registerSubmitBtn!: HTMLButtonElement;
-    
-    private forgotForm!: HTMLFormElement;
-    private forgotEmail!: HTMLInputElement;
-    private forgotSubmitBtn!: HTMLButtonElement;
-    
-    private forgotLink!: HTMLElement;
-    private registerLink!: HTMLElement;
-    private backToLoginFromRegister!: HTMLElement;
-    private backToLoginFromForgot!: HTMLElement;
-    
-    private popupTitle!: HTMLElement;
-    private popupDesc!: HTMLElement;
-    
-    private errorTimeout: number | null = null;
-    private isInitialized: boolean = false;
-    
+    overlay;
+    closeBtn;
+    screens;
+    errors;
+    loginForm;
+    emailInput;
+    passwordInput;
+    loginSubmitBtn;
+    registerForm;
+    regName;
+    regEmail;
+    regPassword;
+    regConfirm;
+    registerSubmitBtn;
+    forgotForm;
+    forgotEmail;
+    forgotSubmitBtn;
+    forgotLink;
+    registerLink;
+    backToLoginFromRegister;
+    backToLoginFromForgot;
+    popupTitle;
+    popupDesc;
+    errorTimeout = null;
+    isInitialized = false;
+
     constructor() {
         console.log('AuthModal constructor called');
-        
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => this.init());
         } else {
             this.init();
         }
     }
-    
-    private init(): void {
-        console.log('AuthModal init started');
-        
-        try {
-            // Получаем элементы
-            this.overlay = document.getElementById('popupOverlay') as HTMLElement;
-            this.closeBtn = document.getElementById('closePopupBtn') as HTMLElement;
-            
-            if (!this.overlay) {
-                console.error('popupOverlay not found');
-                return;
-            }
-            
-            if (!this.closeBtn) {
-                console.error('closePopupBtn not found');
-                return;
-            }
-            
-            console.log('Elements found successfully');
-            
-            // Получаем экраны
-            this.screens = {
-                login: document.getElementById('loginScreen') as HTMLElement,
-                register: document.getElementById('registerScreen') as HTMLElement,
-                forgot: document.getElementById('forgotScreen') as HTMLElement
-            };
-            
-            // Получаем контейнеры ошибок
-            this.errors = {
-                login: document.getElementById('loginError') as HTMLElement,
-                register: document.getElementById('registerError') as HTMLElement,
-                forgot: document.getElementById('forgotError') as HTMLElement
-            };
-            
-            // Получаем формы
-            this.loginForm = document.getElementById('loginForm') as HTMLFormElement;
-            this.emailInput = document.getElementById('email') as HTMLInputElement;
-            this.passwordInput = document.getElementById('password') as HTMLInputElement;
-            this.loginSubmitBtn = document.getElementById('loginSubmitBtn') as HTMLButtonElement;
-            
-            this.registerForm = document.getElementById('registerForm') as HTMLFormElement;
-            this.regName = document.getElementById('regName') as HTMLInputElement;
-            this.regEmail = document.getElementById('regEmail') as HTMLInputElement;
-            this.regPassword = document.getElementById('regPassword') as HTMLInputElement;
-            this.regConfirm = document.getElementById('regConfirm') as HTMLInputElement;
-            this.registerSubmitBtn = document.getElementById('registerSubmitBtn') as HTMLButtonElement;
-            
-            this.forgotForm = document.getElementById('forgotForm') as HTMLFormElement;
-            this.forgotEmail = document.getElementById('forgotEmail') as HTMLInputElement;
-            this.forgotSubmitBtn = document.getElementById('forgotSubmitBtn') as HTMLButtonElement;
-            
-            // Получаем ссылки
-            this.forgotLink = document.getElementById('forgotLink') as HTMLElement;
-            this.registerLink = document.getElementById('registerLink') as HTMLElement;
-            this.backToLoginFromRegister = document.getElementById('backToLoginFromRegister') as HTMLElement;
-            this.backToLoginFromForgot = document.getElementById('backToLoginFromForgot') as HTMLElement;
-            
-            // Получаем динамические элементы
-            this.popupTitle = document.getElementById('popup-title') as HTMLElement;
-            this.popupDesc = document.getElementById('popup-desc') as HTMLElement;
-            
-            this.setupEventListeners();
 
+    init() {
+        console.log('AuthModal init started');
+        try {
+            this.overlay = document.getElementById('popupOverlay');
+            this.closeBtn = document.getElementById('closePopupBtn');
+            if (!this.overlay || !this.closeBtn) {
+                console.warn('AuthModal: popup elements not found, skipping');
+                return;
+            }
+            console.log('Elements found successfully');
+
+            this.screens = {
+                login: document.getElementById('loginScreen'),
+                register: document.getElementById('registerScreen'),
+                forgot: document.getElementById('forgotScreen')
+            };
+            this.errors = {
+                login: document.getElementById('loginError'),
+                register: document.getElementById('registerError'),
+                forgot: document.getElementById('forgotError')
+            };
+            this.loginForm = document.getElementById('loginForm');
+            this.emailInput = document.getElementById('email');
+            this.passwordInput = document.getElementById('password');
+            this.loginSubmitBtn = document.getElementById('loginSubmitBtn');
+            this.registerForm = document.getElementById('registerForm');
+            this.regName = document.getElementById('regName');
+            this.regEmail = document.getElementById('regEmail');
+            this.regPassword = document.getElementById('regPassword');
+            this.regConfirm = document.getElementById('regConfirm');
+            this.registerSubmitBtn = document.getElementById('registerSubmitBtn');
+            this.forgotForm = document.getElementById('forgotForm');
+            this.forgotEmail = document.getElementById('forgotEmail');
+            this.forgotSubmitBtn = document.getElementById('forgotSubmitBtn');
+            this.forgotLink = document.getElementById('forgotLink');
+            this.registerLink = document.getElementById('registerLink');
+            this.backToLoginFromRegister = document.getElementById('backToLoginFromRegister');
+            this.backToLoginFromForgot = document.getElementById('backToLoginFromForgot');
+            this.popupTitle = document.getElementById('popup-title');
+            this.popupDesc = document.getElementById('popup-desc');
+
+            this.setupEventListeners();
             setTimeout(() => this.openPopup(), 100);
-            
             this.isInitialized = true;
             console.log('AuthModal initialized successfully');
         } catch (error) {
             console.error('Error initializing AuthModal:', error);
         }
     }
-    
-    private setupEventListeners(): void {
+
+    setupEventListeners() {
         if (!this.overlay || !this.closeBtn) return;
 
-        // Закрытие попапа
         this.closeBtn.addEventListener('click', () => this.closePopup());
-        this.overlay.addEventListener('click', (e: MouseEvent) => {
+        this.overlay.addEventListener('click', (e) => {
             if (e.target === this.overlay) this.closePopup();
         });
-        
-        // Закрытие по Escape
-        document.addEventListener('keydown', (e: KeyboardEvent) => {
+        document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && this.overlay && !this.overlay.classList.contains('hidden')) {
                 this.closePopup();
             }
         });
-        
-        // Переключение экранов
+
         if (this.registerLink) {
-            this.registerLink.addEventListener('click', (e: Event) => {
+            this.registerLink.addEventListener('click', (e) => {
                 e.preventDefault();
                 if (this.screens && this.errors) {
                     this.showScreen(this.screens.register);
@@ -155,9 +109,8 @@ class AuthModal {
                 }
             });
         }
-        
         if (this.forgotLink) {
-            this.forgotLink.addEventListener('click', (e: Event) => {
+            this.forgotLink.addEventListener('click', (e) => {
                 e.preventDefault();
                 if (this.screens && this.errors) {
                     this.showScreen(this.screens.forgot);
@@ -166,9 +119,8 @@ class AuthModal {
                 }
             });
         }
-        
         if (this.backToLoginFromRegister) {
-            this.backToLoginFromRegister.addEventListener('click', (e: Event) => {
+            this.backToLoginFromRegister.addEventListener('click', (e) => {
                 e.preventDefault();
                 if (this.screens && this.errors) {
                     this.showScreen(this.screens.login);
@@ -176,9 +128,8 @@ class AuthModal {
                 }
             });
         }
-        
         if (this.backToLoginFromForgot) {
-            this.backToLoginFromForgot.addEventListener('click', (e: Event) => {
+            this.backToLoginFromForgot.addEventListener('click', (e) => {
                 e.preventDefault();
                 if (this.screens && this.errors) {
                     this.showScreen(this.screens.login);
@@ -186,25 +137,15 @@ class AuthModal {
                 }
             });
         }
-        
-        // Обработчики отправки форм
-        if (this.loginForm) {
-            this.loginForm.addEventListener('submit', (e: Event) => this.handleLogin(e));
-        }
-        
-        if (this.registerForm) {
-            this.registerForm.addEventListener('submit', (e: Event) => this.handleRegister(e));
-        }
-        
-        if (this.forgotForm) {
-            this.forgotForm.addEventListener('submit', (e: Event) => this.handleForgot(e));
-        }
-        
-        // Очистка ошибок при вводе
+
+        if (this.loginForm) this.loginForm.addEventListener('submit', (e) => this.handleLogin(e));
+        if (this.registerForm) this.registerForm.addEventListener('submit', (e) => this.handleRegister(e));
+        if (this.forgotForm) this.forgotForm.addEventListener('submit', (e) => this.handleForgot(e));
+
         this.setupInputListeners();
     }
-    
-    private setupInputListeners(): void {
+
+    setupInputListeners() {
         const inputs = [
             { input: this.emailInput, error: this.errors?.login },
             { input: this.passwordInput, error: this.errors?.login },
@@ -214,19 +155,15 @@ class AuthModal {
             { input: this.regConfirm, error: this.errors?.register },
             { input: this.forgotEmail, error: this.errors?.forgot }
         ];
-        
         inputs.forEach(({ input, error }) => {
             if (input && error) {
-                input.addEventListener('input', () => {
-                    error.classList.add('hidden');
-                });
+                input.addEventListener('input', () => error.classList.add('hidden'));
             }
         });
     }
-    
-    private updateAriaLabels(screen: HTMLElement): void {
+
+    updateAriaLabels(screen) {
         if (!this.popupTitle || !this.popupDesc) return;
-        
         if (screen === this.screens?.login) {
             this.popupTitle.textContent = 'Добро пожаловать!';
             this.popupDesc.textContent = 'Войдите, чтобы продолжить';
@@ -238,23 +175,21 @@ class AuthModal {
             this.popupDesc.textContent = 'Мы отправим ссылку на ваш email';
         }
     }
-    
-    private showScreen(screen: HTMLElement): void {
+
+    showScreen(screen) {
         if (!this.screens) return;
-        
         this.screens.login.classList.add('hidden');
         this.screens.register.classList.add('hidden');
         this.screens.forgot.classList.add('hidden');
         screen.classList.remove('hidden');
         this.updateAriaLabels(screen);
-        
         setTimeout(() => {
-            const firstInput = screen.querySelector('input:not([type="hidden"])') as HTMLInputElement;
+            const firstInput = screen.querySelector('input:not([type="hidden"])');
             if (firstInput) firstInput.focus();
         }, 100);
     }
-    
-    private showError(container: HTMLElement, message: string): void {
+
+    showError(container, message) {
         if (this.errorTimeout) clearTimeout(this.errorTimeout);
         container.textContent = message;
         container.classList.remove('hidden');
@@ -263,87 +198,63 @@ class AuthModal {
             this.errorTimeout = null;
         }, 5000);
     }
-    
-    private showNotification(message: string, type: 'success' | 'error' | 'info' = 'success'): void {
+
+    showNotification(message, type = 'success') {
         const notification = document.getElementById('notification');
         if (!notification) return;
-        
         notification.textContent = message;
-        notification.className = 'notification';
-        notification.classList.add(type);
+        notification.className = 'notification ' + type;
         notification.classList.remove('hidden');
-        
-        setTimeout(() => {
-            notification.classList.add('show');
-        }, 10);
-        
+        setTimeout(() => notification.classList.add('show'), 10);
         setTimeout(() => {
             notification.classList.remove('show');
-            setTimeout(() => {
-                notification.classList.add('hidden');
-            }, 300);
+            setTimeout(() => notification.classList.add('hidden'), 300);
         }, 3000);
     }
-    
-    private isValidEmail(email: string): boolean {
+
+    isValidEmail(email) {
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return re.test(String(email).toLowerCase());
     }
-    
-    private openPopup(): void {
-        if (!this.overlay) {
-            console.error('Cannot open popup: overlay is null');
-            return;
-        }
-        
+
+    openPopup() {
+        if (!this.overlay) return;
         console.log('Opening popup, current classes:', this.overlay.className);
         this.overlay.classList.remove('hidden');
         this.overlay.setAttribute('aria-hidden', 'false');
-        
-        if (this.screens) {
-            this.showScreen(this.screens.login);
-        }
-        
+        if (this.screens) this.showScreen(this.screens.login);
         document.body.style.overflow = 'hidden';
         console.log('Popup opened, classes after:', this.overlay.className);
     }
-    
-    private closePopup(): void {
+
+    closePopup() {
         if (!this.overlay) return;
-        
         this.overlay.classList.add('hidden');
         this.overlay.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
-        
         if (this.errors) {
             this.errors.login.classList.add('hidden');
             this.errors.register.classList.add('hidden');
             this.errors.forgot.classList.add('hidden');
         }
-        
         if (this.loginForm) this.loginForm.reset();
         if (this.registerForm) this.registerForm.reset();
         if (this.forgotForm) this.forgotForm.reset();
     }
-    
-    private async handleLogin(e: Event): Promise<void> {
+
+    async handleLogin(e) {
         e.preventDefault();
-        
         if (!this.emailInput || !this.passwordInput || !this.loginSubmitBtn || !this.errors) return;
-        
         const email = this.emailInput.value.trim();
         const password = this.passwordInput.value.trim();
-        
         if (!email || !password) {
             this.showError(this.errors.login, 'Заполните все поля');
             return;
         }
-        
         if (password.length < 6) {
             this.showError(this.errors.login, 'Пароль должен быть минимум 6 символов');
             return;
         }
-
         const login = email;
         if (login.includes('@')) {
             if (!this.isValidEmail(login)) {
@@ -354,10 +265,8 @@ class AuthModal {
             this.showError(this.errors.login, 'Введите логин (от 2 символов) или email');
             return;
         }
-        
         this.loginSubmitBtn.disabled = true;
         this.loginSubmitBtn.textContent = 'Вход...';
-        
         try {
             await new Promise(resolve => setTimeout(resolve, 1500));
             console.log('Успешный вход:', { login });
@@ -373,41 +282,33 @@ class AuthModal {
             }
         }
     }
-    
-    private async handleRegister(e: Event): Promise<void> {
+
+    async handleRegister(e) {
         e.preventDefault();
-        
-        if (!this.regName || !this.regEmail || !this.regPassword || !this.regConfirm || 
+        if (!this.regName || !this.regEmail || !this.regPassword || !this.regConfirm ||
             !this.registerSubmitBtn || !this.errors) return;
-        
         const name = this.regName.value.trim();
         const email = this.regEmail.value.trim();
         const password = this.regPassword.value.trim();
         const confirm = this.regConfirm.value.trim();
-        
         if (!name || !email || !password || !confirm) {
             this.showError(this.errors.register, 'Заполните все поля');
             return;
         }
-        
         if (password.length < 6) {
             this.showError(this.errors.register, 'Пароль должен быть минимум 6 символов');
             return;
         }
-        
         if (password !== confirm) {
             this.showError(this.errors.register, 'Пароли не совпадают');
             return;
         }
-        
         if (!this.isValidEmail(email)) {
             this.showError(this.errors.register, 'Введите корректный email');
             return;
         }
-        
         this.registerSubmitBtn.disabled = true;
         this.registerSubmitBtn.textContent = 'Регистрация...';
-        
         try {
             await new Promise(resolve => setTimeout(resolve, 1500));
             console.log('Регистрация:', { name, email });
@@ -425,27 +326,21 @@ class AuthModal {
             }
         }
     }
-    
-    private async handleForgot(e: Event): Promise<void> {
+
+    async handleForgot(e) {
         e.preventDefault();
-        
         if (!this.forgotEmail || !this.forgotSubmitBtn || !this.errors) return;
-        
         const email = this.forgotEmail.value.trim();
-        
         if (!email) {
             this.showError(this.errors.forgot, 'Введите email');
             return;
         }
-        
         if (!this.isValidEmail(email)) {
             this.showError(this.errors.forgot, 'Введите корректный email');
             return;
         }
-        
         this.forgotSubmitBtn.disabled = true;
         this.forgotSubmitBtn.textContent = 'Отправка...';
-        
         try {
             await new Promise(resolve => setTimeout(resolve, 1500));
             console.log('Восстановление пароля для:', email);
@@ -464,6 +359,5 @@ class AuthModal {
     }
 }
 
-// Создаем экземпляр
 console.log('Creating AuthModal instance');
 new AuthModal();

@@ -1,23 +1,18 @@
-# 1. Базовый образ (ОС + Node.js 18)
-FROM node:18-alpine
+FROM python:3.12-slim
 
-# 2. Рабочая папка внутри контейнера
 WORKDIR /app
 
-# 3. Копируем файл зависимостей (для кеширования)
-COPY package*.json ./
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq-dev \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
 
-# 4. Устанавливаем зависимости (npm install внутри контейнера!)
-RUN npm install --legacy-peer-deps
+COPY requirements.txt .
+RUN pip install --no-cache-dir --upgrade pip
+RUN pip install --no-cache-dir -r requirements.txt
 
-# 5. Копируем весь твой код в контейнер
-COPY . .
+COPY src/ ./src/
 
-# 6. Генерируем клиент Prisma (обязательно для твоего БД)
-RUN npx prisma generate
+ENV PYTHONPATH=/app/src
 
-# 7. Открываем порт 3000
-EXPOSE 3000
-
-# 8. Команда запуска сервера
-CMD ["npm", "run", "dev"]
+CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]

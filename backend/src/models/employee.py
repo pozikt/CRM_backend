@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, Boolean, Text
-from app.database import Base
+from core.database import Base
+from sqlalchemy.orm import relationship
 
 class Employee(Base):
     __tablename__ = "employees"
@@ -11,3 +12,4 @@ class Employee(Base):
     telegram = Column(String(100), nullable=True)
     is_active = Column(Boolean, default=True)
     notes = Column(Text, nullable=True)
+    managed_projects = relationship("Project", back_populates="manager")

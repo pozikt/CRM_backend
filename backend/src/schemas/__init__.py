@@ -1,2 +1,5 @@
-from app.schemas.call import CallCreate, CallUpdate, CallOut
-from app.schemas.employee import EmployeeCreate, EmployeeUpdate, EmployeeOut
+from .call import CallCreate, CallUpdate, CallOut
+from .employee import EmployeeCreate, EmployeeUpdate, EmployeeOut
+from .project import ProjectCreate, ProjectUpdate, ProjectOut
+from .status import StatusCreate, StatusOut
+from .priority import PriorityCreate, PriorityOut

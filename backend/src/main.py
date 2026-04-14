@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.database import engine
-from app.models import Call, Employee
-from app.routers import calls, employees
+from core.database import engine
+from models import Call, Employee
+from api.v1.endpoints import calls, employees
 
 # Создаём таблицы
 Call.metadata.create_all(bind=engine)

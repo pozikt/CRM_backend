@@ -1,15 +1,23 @@
-const API_BASE = '/api';
+const API_BASE = '/api/v1';
 
 document.addEventListener('DOMContentLoaded', function() {
-    loadEmployees();
-    initEmployeeModal();
+    const grid = document.getElementById('employeesGrid');
+    if (grid) {
+        loadEmployees();
+        initEmployeeModal();
+    }
 });
 
 async function loadEmployees() {
     try {
         const res = await fetch(`${API_BASE}/employees`);
+        if (!res.ok) throw new Error('Ошибка загрузки');
         const employees = await res.json();
-        renderEmployees(employees);
+        if (Array.isArray(employees)) {
+            renderEmployees(employees);
+        } else {
+            console.error('Ожидался массив, получено:', employees);
+        }
     } catch (err) {
         console.error('Ошибка загрузки:', err);
     }
@@ -27,10 +35,10 @@ function renderEmployees(employees) {
     employees.forEach(emp => {
         if (existing.has(emp.id)) {
             const card = existing.get(emp.id);
-            updateCard(card, emp.fullName, emp.role);
+            updateCard(card, emp.full_name, emp.role);
             existing.delete(emp.id);
         } else {
-            const card = createCard(emp.fullName, emp.role, emp.id);
+            const card = createCard(emp.full_name, emp.role, emp.id);
             grid.appendChild(card);
         }
     });
@@ -53,7 +61,7 @@ async function createOnServer(data) {
     });
     if (res.ok) {
         const newEmp = await res.json();
-        const card = createCard(newEmp.fullName, newEmp.role, newEmp.id);
+        const card = createCard(newEmp.full_name, newEmp.role, newEmp.id);
         document.getElementById('employeesGrid').appendChild(card);
     }
     return res.ok;
@@ -68,7 +76,7 @@ async function updateOnServer(id, data) {
     if (res.ok) {
         const updated = await res.json();
         const card = document.querySelector(`.project-card[data-id="${id}"]`);
-        if (card) updateCard(card, updated.fullName, updated.role);
+        if (card) updateCard(card, updated.full_name, updated.role);
     }
     return res.ok;
 }
@@ -125,6 +133,8 @@ function escapeHtml(str) {
 function initEmployeeModal() {
     const modal = document.getElementById('employeeModal');
     const addBtn = document.getElementById('addEmployeePageBtn');
+    if (!modal || !addBtn) return;
+
     const closeBtn = document.getElementById('closeEmployeeModalBtn');
     const cancelBtn = document.getElementById('cancelEmployeeBtn');
     const saveBtn = document.getElementById('saveEmployeeBtn');
@@ -179,9 +189,9 @@ function initEmployeeModal() {
         modal.classList.add('modal-active'); 
     }
 
-    function openEditModal(card, name, role, id) {
+    window.openEditModal = function(card, name, role, id) {
         openModal(true, id, name, role, card);
-    }
+    };
 
     function closeModal() {
         modal.classList.remove('modal-active');
@@ -197,8 +207,7 @@ function initEmployeeModal() {
             return;
         }
         
-        // 👇 ИСПРАВЛЕНО: fullName вместо full_name
-        const data = { fullName: name, role: role };
+        const data = { full_name: name, role: role };
         
         if (editId) {
             await updateOnServer(editId, data);
@@ -209,10 +218,9 @@ function initEmployeeModal() {
     }
 
     addBtn.onclick = (e) => { e.preventDefault(); openModal(false); };
-    closeBtn.onclick = (e) => { e.preventDefault(); closeModal(); };
-    cancelBtn.onclick = (e) => { e.preventDefault(); closeModal(); };
-    saveBtn.onclick = (e) => { e.preventDefault(); save(); };
+    if (closeBtn) closeBtn.onclick = (e) => { e.preventDefault(); closeModal(); };
+    if (cancelBtn) cancelBtn.onclick = (e) => { e.preventDefault(); closeModal(); };
+    if (saveBtn) saveBtn.onclick = (e) => { e.preventDefault(); save(); };
 
     initSelect();
-    window.openEditModal = openEditModal;
 }
