@@ -1,6 +1,0 @@
-[submodule "frontend"]
-	path = frontend
-	url = https://github.com/mironchick/crm-for-practice
-[submodule "backend-employees-ceels"]
-	path = backend-employees-ceels
-	url = https://github.com/unseesaw/practice
