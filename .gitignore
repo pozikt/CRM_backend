@@ -25,4 +25,7 @@ env/
 ENV/
 .venv
 .pytest_cache/
-.mypy_cache/
+.mypy_cache/.env
+*.db
+uploads/
+venv/
