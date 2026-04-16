@@ -3,16 +3,16 @@
 help:
 	@echo "Доступные команды:"
 	@echo "  make build   - Собрать все образы"
-	@echo "  make up      - Запустить все сервисы"
+	@echo "  make up      - Запустить все сервисы в фоне"
 	@echo "  make down    - Остановить и удалить контейнеры"
 	@echo "  make logs    - Показать логи"
-	@echo "  make clean   - Полная очистка (контейнеры, образы, тома)"
+	@echo "  make clean   - Остановить контейнеры и удалить тома (сброс БД)"
 
 build:
 	docker-compose build --no-cache
 
 up:
-	docker-compose up -d
+	docker-compose up -d --build
 
 down:
 	docker-compose down
@@ -22,4 +22,3 @@ logs:
 
 clean:
 	docker-compose down -v
-	docker system prune -af

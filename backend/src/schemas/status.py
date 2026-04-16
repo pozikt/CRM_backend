@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Optional
 
 class StatusBase(BaseModel):
     name: str
@@ -6,6 +7,10 @@ class StatusBase(BaseModel):
 
 class StatusCreate(StatusBase):
     pass
+
+class StatusUpdate(BaseModel):
+    name: Optional[str] = None
+    is_default: Optional[bool] = None
 
 class StatusOut(StatusBase):
     id: int

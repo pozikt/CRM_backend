@@ -60,13 +60,12 @@ class AdminModal {
         const editEmployeeBtn = Array.from(document.querySelectorAll('.admin-btn')).find(
             btn => btn.textContent?.includes('Edit an employee')
         );
-
         if (addProjectBtn) {
             addProjectBtn.addEventListener('click', () => {
                 this.close();
-                window.location.assign('project.html');
-            });
-        }
+            window.location.assign('project.html?new=true');
+        });
+}
         if (exportBtn) {
             exportBtn.addEventListener('click', () => {
                 console.log('Export clicked');
@@ -85,6 +84,7 @@ class AdminModal {
                 this.close();
             });
         }
+ 
     }
 
     open() {

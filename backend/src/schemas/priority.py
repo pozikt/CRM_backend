@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Optional
 
 class PriorityBase(BaseModel):
     name: str
@@ -7,6 +8,11 @@ class PriorityBase(BaseModel):
 
 class PriorityCreate(PriorityBase):
     pass
+
+class PriorityUpdate(BaseModel):
+    name: Optional[str] = None
+    color: Optional[str] = None
+    order: Optional[int] = None
 
 class PriorityOut(PriorityBase):
     id: int

@@ -1,24 +1,16 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from core.database import engine
-from models import Call, Employee
-from api.v1.endpoints import calls, employees
+from core.database import Base, engine
+from api.v1.endpoints import calls, employees, utils, projects, priorities, statuses
 
-# Создаём таблицы
-Call.metadata.create_all(bind=engine)
-Employee.metadata.create_all(bind=engine)
+# Создаём все таблицы
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="CRM API", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",   # ваш фронтенд
-        "http://127.0.0.1:5173",
-        "http://localhost:5000",   # прокси (если используете)
-        "http://127.0.0.1:5000",
-        "*"  # временно разрешить все (только для разработки)
-    ],
+    allow_origins=["*"],  # для разработки ок, потом можно сузить
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -26,6 +18,10 @@ app.add_middleware(
 
 app.include_router(calls.router)
 app.include_router(employees.router)
+app.include_router(utils.router)
+app.include_router(projects.router)
+app.include_router(priorities.router)
+app.include_router(statuses.router)
 
 @app.get("/")
 def root():
