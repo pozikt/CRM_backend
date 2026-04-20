@@ -90,6 +90,41 @@ function applyDateMask(input) {
             this.value = value.slice(0,2) + '.' + (value.length > 2 ? value.slice(2,4) : '') + (value.length > 4 ? '.' + value.slice(4,8) : '');
         }
     });
+
+    // Проверка валидности при потере фокуса
+    input.addEventListener('blur', function() {
+        const val = this.value.trim();
+        if (val.length === 0) return; // пустое поле не проверяем
+        
+        if (val.length !== 10) {
+            alert('Дата должна быть в формате дд.мм.гггг');
+            this.value = '';
+            return;
+        }
+        
+        const parts = val.split('.');
+        if (parts.length !== 3) {
+            alert('Неверный формат даты');
+            this.value = '';
+            return;
+        }
+        
+        const day = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10);
+        const year = parseInt(parts[2], 10);
+        
+        if (isNaN(day) || isNaN(month) || isNaN(year)) {
+            alert('Дата должна содержать только цифры');
+            this.value = '';
+            return;
+        }
+        
+        const date = new Date(year, month - 1, day);
+        if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) {
+            alert('Введена несуществующая дата');
+            this.value = '';
+        }
+    });
 }
 
 // Применяем маску ко всем полям с плейсхолдером "дд.мм.гггг"
@@ -111,68 +146,103 @@ function initEditProjectMode() {
             btn.classList.toggle('btn-edit-project--active', isEdit);
             btn.textContent = label;
         });
-
+    
         const inputs = projectDetail.querySelectorAll('.form-input, .status-date-field input');
         inputs.forEach(function (input) {
             input.readOnly = !isEdit;
         });
-
+    
         if (!isEdit) closeAllSelects();
     }
 
-    async function handleSave() {
-        // Собираем данные из формы
-        const nameInput = document.getElementById('projectNameInput');
-        const projectName = nameInput ? nameInput.value.trim() : 'Новый проект';
-        
-        const statusPlaceholder = projectDetail.querySelector('.custom-select[data-select="status"] .custom-select__value');
-        const statusText = statusPlaceholder ? statusPlaceholder.textContent.trim() : '';
-        const status = statusesList.find(s => s.name === statusText);
-        const status_id = status ? status.id : 1;
-        
-        const priorityPlaceholder = projectDetail.querySelector('.custom-select[data-select="priority"] .custom-select__value');
-        const priorityText = priorityPlaceholder ? priorityPlaceholder.textContent.trim() : '';
-        const priority = prioritiesList.find(p => p.name === priorityText);
-        const priority_id = priority ? priority.id : 1;
-        
-        const progressInput = document.getElementById('projectProgress');
-        const progress = progressInput ? parseInt(progressInput.value) || 0 : 0;
-        
-        const payload = {
-            name: projectName, // <-- теперь переменная существует
-            description: '',
-            status_id: status_id,
-            priority_id: priority_id,
-            manager_id: null,
-            progress: progress,
-            start_date: new Date().toISOString(),
-        };
+async function handleSave() {
+    // Название проекта
+    const nameInput = document.getElementById('projectNameInput');
+    const projectName = nameInput ? nameInput.value.trim() : 'Новый проект';
 
-        const method = isNewProject ? 'POST' : 'PUT';
-        const url = isNewProject ? '/api/v1/projects' : `/api/v1/projects/${projectId}`;
+    // № Контракта (сохраним как client_name)
+    const contractInput = document.getElementById('contractNumber');
+    const clientName = contractInput ? contractInput.value.trim() : '';
 
-        try {
-            const res = await fetch(url, {
-                method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            if (!res.ok) {
-                const err = await res.json();
-                alert('Ошибка: ' + (err.detail || 'Неизвестная ошибка'));
-                return;
-            }
-            const project = await res.json();
-            alert(`Проект "${project.name}" ${isNewProject ? 'создан' : 'обновлён'}!`);
-            if (isNewProject) {
-                window.location.href = '/index.html';
-            } else {
-                setEditMode(false);
-            }
-        } catch (error) {
-            alert('Ошибка сети: ' + error.message);
+    // Тип проекта (пока сохраним в поле tags)
+    const typePlaceholder = projectDetail.querySelector('.custom-select[data-select="type"] .custom-select__value');
+    const typeText = typePlaceholder ? typePlaceholder.textContent.trim() : '';
+
+    // Статус
+    const statusPlaceholder = projectDetail.querySelector('.custom-select[data-select="status"] .custom-select__value');
+    const statusText = statusPlaceholder ? statusPlaceholder.textContent.trim() : '';
+    const status = statusesList.find(s => s.name === statusText);
+    const status_id = status ? status.id : 1;
+
+    // Приоритет
+    const priorityPlaceholder = projectDetail.querySelector('.custom-select[data-select="priority"] .custom-select__value');
+    const priorityText = priorityPlaceholder ? priorityPlaceholder.textContent.trim() : '';
+    const priority = prioritiesList.find(p => p.name === priorityText);
+    const priority_id = priority ? priority.id : 1;
+
+    // Даты
+    const startDateInput = document.getElementById('startDate');
+    const deadlineInput = document.getElementById('deadlineDate');
+
+    // Функция для преобразования даты из дд.мм.гггг в ISO
+    const parseDate = (dateStr) => {
+        if (!dateStr || typeof dateStr !== 'string') return null;
+        const trimmed = dateStr.trim();
+        if (trimmed.length === 0) return null;
+        const parts = trimmed.split('.');
+        if (parts.length !== 3) return null;
+        const day = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10);
+        const year = parseInt(parts[2], 10);
+        if (isNaN(day) || isNaN(month) || isNaN(year)) return null;
+        const date = new Date(Date.UTC(year, month - 1, day));
+        if (date.getUTCFullYear() !== year || date.getUTCMonth() !== month - 1 || date.getUTCDate() !== day) {
+            return null;
         }
+        return date.toISOString();
+    };
+
+    console.log('deadlineInput element:', deadlineInput);
+    console.log('deadlineInput value:', deadlineInput?.value);
+    console.log('parsed deadline:', parseDate(deadlineInput?.value));
+
+    const payload = {
+        name: projectName,
+        description: '',
+        client_name: clientName,
+        tags: typeText,
+        status_id: status_id,
+        priority_id: priority_id,
+        manager_id: null,
+        start_date: startDateInput ? parseDate(startDateInput.value) : null,
+        deadline_date: deadlineInput ? parseDate(deadlineInput.value) : null,
+    };
+
+    const method = isNewProject ? 'POST' : 'PUT';
+    const url = isNewProject ? '/api/v1/projects' : `/api/v1/projects/${projectId}`;
+
+    try {
+        const res = await fetch(url, {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        if (!res.ok) {
+            const err = await res.json();
+            alert('Ошибка: ' + (err.detail || 'Неизвестная ошибка'));
+            return;
+        }
+        const project = await res.json();
+        alert(`Проект "${project.name}" ${isNewProject ? 'создан' : 'обновлён'}!`);
+        if (isNewProject) {
+            window.location.href = '/index.html';
+        } else {
+            setEditMode(false);
+        }
+    } catch (error) {
+        alert('Ошибка сети: ' + error.message);
     }
+}
 
     function toggleEditMode() {
         const isEdit = projectDetail.getAttribute('data-edit-mode') === 'true';
@@ -193,7 +263,73 @@ function initEditProjectMode() {
         // TODO: загрузить проект и заполнить поля
     }
 
-    setEditMode(isNewProject); // для нового сразу режим редактирования
+        // Загрузка существующего проекта
+    async function loadProject(id) {
+        try {
+            const res = await fetch(`/api/v1/projects/${id}`);
+            if (!res.ok) throw new Error('Проект не найден');
+            const project = await res.json();
+
+            // Название
+            const nameInput = document.getElementById('projectNameInput');
+            if (nameInput) nameInput.value = project.name;
+
+            // № Контракта (client_name)
+            const contractInput = document.getElementById('contractNumber');
+            if (contractInput) contractInput.value = project.client_name || '';
+
+            // Тип (из tags)
+            const typePlaceholder = projectDetail.querySelector('.custom-select[data-select="type"] .custom-select__placeholder');
+            if (typePlaceholder && project.tags) {
+                typePlaceholder.textContent = project.tags;
+                typePlaceholder.classList.add('custom-select__value');
+            }
+
+            // Статус
+            const statusPlaceholder = projectDetail.querySelector('.custom-select[data-select="status"] .custom-select__placeholder');
+            if (statusPlaceholder && project.status) {
+                statusPlaceholder.textContent = project.status.name;
+                statusPlaceholder.classList.add('custom-select__value');
+            }
+
+            // Приоритет
+            const priorityPlaceholder = projectDetail.querySelector('.custom-select[data-select="priority"] .custom-select__placeholder');
+            if (priorityPlaceholder && project.priority) {
+                priorityPlaceholder.textContent = project.priority.name;
+                priorityPlaceholder.classList.add('custom-select__value');
+            }
+
+            // Даты
+            const startDateInput = document.getElementById('startDate');
+            if (startDateInput && project.start_date) {
+                const date = new Date(project.start_date);
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const year = date.getFullYear();
+                startDateInput.value = `${day}.${month}.${year}`;
+            }
+
+            const deadlineInput = document.getElementById('deadlineDate');
+            if (deadlineInput && project.deadline_date) {
+                const date = new Date(project.deadline_date);
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const year = date.getFullYear();
+                deadlineInput.value = `${day}.${month}.${year}`;
+            }
+
+            setEditMode(false);
+        } catch (err) {
+            console.error('Ошибка загрузки проекта:', err);
+            alert('Не удалось загрузить проект');
+        }
+    }
+
+    if (!isNewProject && projectId) {
+        loadProject(projectId);
+    } else {
+        setEditMode(isNewProject);
+    }
 }
 
 

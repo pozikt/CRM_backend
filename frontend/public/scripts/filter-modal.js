@@ -123,7 +123,17 @@ class FilterModal {
                 </div>
             </div>
         `).join('');
+        document.querySelectorAll('.project-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                if (e.target.closest('button')) return;
+                    const projectId = card.dataset.projectId;
+                if (projectId) {
+                    window.location.href = `/project.html?id=${projectId}`;
+                }
+            });
+        });
     }
+
 
     escapeHtml(str) {
         if (!str) return '';

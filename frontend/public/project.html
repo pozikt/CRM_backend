@@ -35,15 +35,14 @@
                     <div class="form-field form-field--edit-trigger">
                         <label class="form-label">Project</label>
                         <input type="text" class="form-input" id="projectNameInput" placeholder="Название проекта" value="Новый проект">
-                        <button type="button" class="btn-edit-project btn-edit-project--in-form js-edit-project-toggle" id="editProjectBtnForm">Edit the project</button>
                     </div>
                     <div class="form-field">
                         <label class="form-label">№ Contract</label>
-                        <input type="text" class="form-input" placeholder="Enter the number">
+                        <input type="text" class="form-input" id="contractNumber" placeholder="Enter the number">
                     </div>
                     <div class="form-field form-field--dropdown">
                         <label class="form-label">Type</label>
-                        <div class="custom-select" data-select="type">
+                        <div class="custom-select" data-select="type" id="projectType">
                             <span class="custom-select__placeholder">Choosing a type</span>
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                                 <path d="M6 9L12 15L18 9" stroke="#686B73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -84,19 +83,11 @@
                     </div>
                     <div class="form-field">
                         <label class="form-label">Start date</label>
-                        <input type="text" class="form-input" placeholder="дд.мм.гггг">
+                        <input type="text" class="form-input" id="startDate" placeholder="дд.мм.гггг">
                     </div>
                     <div class="form-field">
                         <label class="form-label">Deadline</label>
-                        <input type="text" class="form-input" placeholder="дд.мм.гггг">
-                    </div>
-                    <div class="form-field">
-                        <label class="form-label">Completion date</label>
-                        <input type="text" class="form-input" placeholder="дд.мм.гггг">
-                    </div>
-                    <div class="form-field">
-                        <label class="form-label">Progress (%)</label>
-                        <input type="number" id="projectProgress" class="form-input" min="0" max="100" value="0" step="1">
+                        <input type="text" class="form-input" id="deadlineDate" placeholder="дд.мм.гггг">
                     </div>
                 </div>
             </section>
