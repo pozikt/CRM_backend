@@ -17,3 +17,4 @@ typing_extensions==4.15.0
 typing-inspection==0.4.2
 uvicorn==0.42.0
 python-dotenv==1.0.0
+python-multipart==0.0.9
