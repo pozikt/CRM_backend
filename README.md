@@ -64,3 +64,7 @@ pip install -r requirements.txt
 uvicorn src.main:app --reload
 
 Фронтенд: открыть frontend/public/index.html в браузере
+
+## Импорт/экспорт
+
+Сейчас работает только через Swagger
