@@ -10,6 +10,10 @@ class FilterModal {
     filterDropdowns;
     projectsContainer;
 
+    // Хранение текущих активных фильтров и поискового запроса
+    _currentFilters = { status: [], priority: [], responsible: [] };
+    _currentSearch = '';
+
     constructor() {
         const modal = document.getElementById('filterModal');
         if (!modal) throw new Error('Modal element not found');
@@ -55,17 +59,24 @@ class FilterModal {
         }
     }
 
-    async loadProjects(filters) {
+    async loadProjects(filters, search) {
         try {
-            let url = '/api/v1/projects';
+            const params = new URLSearchParams();
+
             if (filters) {
-                const params = new URLSearchParams();
+                // Передаём числовые ID — бэкенд принимает integer
                 if (filters.status.length > 0) params.append('status', filters.status[0]);
                 if (filters.priority.length > 0) params.append('priority', filters.priority[0]);
                 if (filters.responsible.length > 0) params.append('responsible', filters.responsible[0]);
-                const query = params.toString();
-                if (query) url += '?' + query;
             }
+
+            if (search && search.trim()) {
+                params.append('search', search.trim());
+            }
+
+            const queryString = params.toString();
+            const url = '/api/v1/projects' + (queryString ? '?' + queryString : '');
+
             console.log('Загрузка проектов:', url);
             const response = await fetch(url);
             if (!response.ok) throw new Error('Ошибка загрузки');
@@ -109,31 +120,31 @@ class FilterModal {
                     </div>
                     <div class="card-row">
                         <span class="label">Responsible</span>
-                        <span class="pill">${this.escapeHtml(project.manager?.fullName || 'Unassigned')}</span>
+                        <span class="pill">${this.escapeHtml(project.manager?.full_name || 'Unassigned')}</span>
                     </div>
                     ${project.progress !== undefined ? `
-                    <div class="card-row">
-                        <span class="label">Progress</span>
-                        <div style="width:100%;height:20px;background:#f0f0f0;border-radius:10px;overflow:hidden;">
-                            <div style="width:${project.progress}%;height:100%;background:linear-gradient(90deg,#C05BF0,#4F7FFF);"></div>
-                        </div>
-                        <span style="margin-left:8px;">${project.progress}%</span>
-                    </div>
+            <div class="card-row card-row--progress">
+                <span class="label">Progress</span>
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill" style="width: ${project.progress}%"></div>
+                </div>
+                <span class="progress-percentage">${Math.round(project.progress)}%</span>
+            </div>
                     ` : ''}
                 </div>
             </div>
         `).join('');
-        document.querySelectorAll('.project-card').forEach(card => {
+
+        document.querySelectorAll('.project-card[data-project-id]').forEach(card => {
             card.addEventListener('click', (e) => {
                 if (e.target.closest('button')) return;
-                    const projectId = card.dataset.projectId;
+                const projectId = card.dataset.projectId;
                 if (projectId) {
                     window.location.href = `/project.html?id=${projectId}`;
                 }
             });
         });
     }
-
 
     escapeHtml(str) {
         if (!str) return '';
@@ -163,9 +174,10 @@ class FilterModal {
     updateStatusFilter(statuses) {
         const dropdown = document.getElementById('statusDropdown');
         if (!dropdown) return;
+        // Используем числовой ID для передачи в API
         dropdown.innerHTML = statuses.map(s => `
             <label class="filter-option">
-                <input type="checkbox" name="status" value="${s.name.toLowerCase()}">
+                <input type="checkbox" name="status" value="${s.id}">
                 <span class="checkbox-custom"></span>
                 <span>${this.escapeHtml(s.name)}</span>
             </label>
@@ -175,11 +187,15 @@ class FilterModal {
     updatePriorityFilter(priorities) {
         const dropdown = document.getElementById('priorityDropdown');
         if (!dropdown) return;
+        // Используем числовой ID для передачи в API
         dropdown.innerHTML = priorities.map(p => `
             <label class="filter-option">
-                <input type="checkbox" name="priority" value="${p.name.toLowerCase()}">
+                <input type="checkbox" name="priority" value="${p.id}">
                 <span class="checkbox-custom"></span>
-                <span>${this.escapeHtml(p.name)}</span>
+                <span style="display:flex;align-items:center;gap:6px;">
+                    <span style="width:10px;height:10px;border-radius:50%;background:${p.color || '#ccc'};flex-shrink:0;"></span>
+                    ${this.escapeHtml(p.name)}
+                </span>
             </label>
         `).join('');
     }
@@ -187,11 +203,12 @@ class FilterModal {
     updateResponsibleFilter(employees) {
         const dropdown = document.getElementById('responsibleDropdown');
         if (!dropdown) return;
+        // Используем числовой ID для передачи в API
         dropdown.innerHTML = employees.map(e => `
             <label class="filter-option">
                 <input type="checkbox" name="responsible" value="${e.id}">
                 <span class="checkbox-custom"></span>
-                <span>${this.escapeHtml(e.fullName)}</span>
+                <span>${this.escapeHtml(e.full_name)}</span>
             </label>
         `).join('');
     }
@@ -199,7 +216,11 @@ class FilterModal {
     init() {
         this.openBtn.addEventListener('click', () => this.open());
         this.closeBtn.addEventListener('click', () => this.close());
-        this.cancelBtn.addEventListener('click', () => this.close());
+        this.cancelBtn.addEventListener('click', () => {
+            // Сброс чекбоксов при отмене
+            this._resetCheckboxes();
+            this.close();
+        });
         this.applyBtn.addEventListener('click', () => this.applyFilters());
 
         this.modalOverlay.addEventListener('click', (e) => {
@@ -213,6 +234,106 @@ class FilterModal {
         });
 
         this.initDropdowns();
+        this.initSearchButton();
+    }
+
+    // Инициализация кнопки поиска в хедере (btn__reg)
+    initSearchButton() {
+        const searchBtn = document.querySelector('.btn__reg');
+        if (!searchBtn) return;
+
+        const searchModal = document.getElementById('searchModal');
+        if (!searchModal) return;
+
+        const searchInput = document.getElementById('searchInput');
+        const searchCloseBtn = document.getElementById('searchModalCloseBtn');
+        const searchClearBtn = document.getElementById('searchClearBtn');
+
+        searchBtn.addEventListener('click', () => {
+            searchModal.classList.add('modal-active');
+            document.body.style.overflow = 'hidden';
+            if (searchInput) {
+                searchInput.value = this._currentSearch;
+                searchInput.focus();
+            }
+        });
+
+        if (searchCloseBtn) {
+            searchCloseBtn.addEventListener('click', () => {
+                searchModal.classList.remove('modal-active');
+                document.body.style.overflow = '';
+            });
+        }
+
+        searchModal.addEventListener('click', (e) => {
+            if (e.target === searchModal) {
+                searchModal.classList.remove('modal-active');
+                document.body.style.overflow = '';
+            }
+        });
+
+        if (searchInput) {
+            // Поиск при вводе с debounce
+            let debounceTimer;
+            searchInput.addEventListener('input', () => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    this._currentSearch = searchInput.value;
+                    this.loadProjects(
+                        this._currentFilters.status.length || this._currentFilters.priority.length || this._currentFilters.responsible.length
+                            ? this._currentFilters
+                            : null,
+                        this._currentSearch
+                    );
+                    this._updateSearchBtnLabel();
+                }, 350);
+            });
+
+            // Поиск при нажатии Enter
+            searchInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    clearTimeout(debounceTimer);
+                    this._currentSearch = searchInput.value;
+                    this.loadProjects(
+                        this._currentFilters.status.length || this._currentFilters.priority.length || this._currentFilters.responsible.length
+                            ? this._currentFilters
+                            : null,
+                        this._currentSearch
+                    );
+                    this._updateSearchBtnLabel();
+                    searchModal.classList.remove('modal-active');
+                    document.body.style.overflow = '';
+                }
+            });
+        }
+
+        if (searchClearBtn) {
+            searchClearBtn.addEventListener('click', () => {
+                if (searchInput) searchInput.value = '';
+                this._currentSearch = '';
+                this.loadProjects(
+                    this._currentFilters.status.length || this._currentFilters.priority.length || this._currentFilters.responsible.length
+                        ? this._currentFilters
+                        : null,
+                    ''
+                );
+                this._updateSearchBtnLabel();
+            });
+        }
+    }
+
+    _updateSearchBtnLabel() {
+        const searchBtn = document.querySelector('.btn__reg');
+        if (!searchBtn) return;
+        if (this._currentSearch && this._currentSearch.trim()) {
+            searchBtn.textContent = `Search: "${this._currentSearch.trim()}"`;
+            searchBtn.style.borderColor = '#C05BF0';
+            searchBtn.style.color = '#C05BF0';
+        } else {
+            searchBtn.textContent = 'Search';
+            searchBtn.style.borderColor = '';
+            searchBtn.style.color = '';
+        }
     }
 
     initDropdowns() {
@@ -255,12 +376,34 @@ class FilterModal {
     open() {
         this.modalOverlay.classList.add('modal-active');
         document.body.style.overflow = 'hidden';
+        // Восстановить состояние чекбоксов из текущих фильтров
+        this._restoreCheckboxes();
     }
 
     close() {
         this.modalOverlay.classList.remove('modal-active');
         document.body.style.overflow = '';
         this.closeAllDropdowns();
+    }
+
+    _restoreCheckboxes() {
+        // Снять все чекбоксы
+        document.querySelectorAll('#filterModal input[type="checkbox"]').forEach(cb => {
+            cb.checked = false;
+        });
+        // Восстановить активные
+        ['status', 'priority', 'responsible'].forEach(type => {
+            this._currentFilters[type].forEach(val => {
+                const cb = document.querySelector(`#filterModal input[name="${type}"][value="${val}"]`);
+                if (cb) cb.checked = true;
+            });
+        });
+    }
+
+    _resetCheckboxes() {
+        document.querySelectorAll('#filterModal input[type="checkbox"]').forEach(cb => {
+            cb.checked = false;
+        });
     }
 
     async applyFilters() {
@@ -270,37 +413,40 @@ class FilterModal {
             responsible: []
         };
 
-        const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+        // Собираем только чекбоксы внутри filterModal
+        const checkboxes = document.querySelectorAll('#filterModal input[type="checkbox"]:checked');
         checkboxes.forEach((checkbox) => {
             const name = checkbox.name;
-            if (filters.hasOwnProperty(name)) {
+            if (Object.prototype.hasOwnProperty.call(filters, name)) {
                 filters[name].push(checkbox.value);
             }
         });
 
         console.log('Applied filters:', filters);
 
-        let url = '/api/v1/projects';
-        const params = new URLSearchParams();
-        if (filters.status.length > 0) params.append('status', filters.status[0]);
-        if (filters.priority.length > 0) params.append('priority', filters.priority[0]);
-        if (filters.responsible.length > 0) params.append('responsible', filters.responsible[0]);
+        // Сохраняем текущие фильтры
+        this._currentFilters = filters;
 
-        const queryString = params.toString();
-        if (queryString) url += '?' + queryString;
+        const hasFilters = filters.status.length > 0 || filters.priority.length > 0 || filters.responsible.length > 0;
+        await this.loadProjects(hasFilters ? filters : null, this._currentSearch);
 
-        console.log('Загрузка отфильтрованных проектов:', url);
+        this.updateAllSelectorText(filters);
+        this._updateFilterBtnLabel(filters);
+        this.close();
+    }
 
-        try {
-            const response = await fetch(url);
-            if (!response.ok) throw new Error('Ошибка загрузки');
-            const projects = await response.json();
-            console.log('Получено проектов:', projects.length);
-            this.renderProjects(projects);
-            this.updateAllSelectorText(filters);
-            this.close();
-        } catch (error) {
-            console.error('Ошибка при применении фильтров:', error);
+    _updateFilterBtnLabel(filters) {
+        const totalActive = filters.status.length + filters.priority.length + filters.responsible.length;
+        const btn = document.querySelector('.btn-filter');
+        if (!btn) return;
+        if (totalActive > 0) {
+            btn.textContent = `Filters (${totalActive})`;
+            btn.style.borderColor = '#C05BF0';
+            btn.style.color = '#C05BF0';
+        } else {
+            btn.textContent = 'Filters';
+            btn.style.borderColor = '';
+            btn.style.color = '';
         }
     }
 
@@ -325,7 +471,10 @@ class FilterModal {
         if (values.length === 0) {
             selector.textContent = defaultTexts[filterType];
         } else if (values.length === 1) {
-            selector.textContent = values[0].charAt(0).toUpperCase() + values[0].slice(1);
+            // Найти текст выбранного элемента
+            const cb = document.querySelector(`#filterModal input[name="${filterType}"][value="${values[0]}"]`);
+            const label = cb ? cb.closest('.filter-option')?.querySelector('span:last-child')?.textContent?.trim() : null;
+            selector.textContent = label || values[0];
         } else {
             selector.textContent = `${values.length} selected`;
         }
