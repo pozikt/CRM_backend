@@ -1,5 +1,5 @@
 // project.js - Project page logic
-// project.js - Project page logic
+
 const urlParams = new URLSearchParams(window.location.search);
 const isNewProject = urlParams.get('new') === 'true';
 const projectId = urlParams.get('id'); // для будущего редактирования
@@ -437,4 +437,3 @@ function initAddEmployee() {
         }
     });
 }
-

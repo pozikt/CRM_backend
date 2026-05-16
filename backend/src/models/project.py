@@ -26,3 +26,4 @@ class Project(Base):
     status = relationship("Status", back_populates="projects")
     priority = relationship("Priority", back_populates="projects")
     manager = relationship("Employee", back_populates="managed_projects")
+    calls = relationship("Call", back_populates="project")

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NIL IT - Team</title>
+    <title>NIL IT | Calls</title>
     <link rel="icon" type="image/png" href="image/1768974434 1.png">
     <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/normalize.css">
@@ -17,52 +17,52 @@
     <header class="header">
         <div class="container header__container">
             <div class="header__left">
-                <nav href="#" class="header__logo">
+                <a href="index.html" class="header__logo">
                     <img src="image/1768974434 1.png" alt="NIL IT CRM">
                     NIL IT
-                </nav>
+                </a>
                 <div class="header__vertical-line"></div>
                 <nav class="header__nav">
                     <a href="index.html" class="nav__link">Projects</a>
                     <a href="employees.html" class="nav__link">Team</a>
-                    <a href="calls.html" class="nav__link">Calls</a>
+                    <a href="calls.html" class="nav__link nav__link--active">Calls</a>
                 </nav>
             </div>
             <div class="header__right">
                 <button class="btn__log">Admin panel</button>
-                <button type="button" class="btn__reg" id="searchHeaderBtn">Search</button>
+                <button type="button" class="btn__reg" id="searchCallsBtn">Search</button>
             </div>
         </div>
     </header>
 
-    <main class="employees-main">
+    <main class="calls-main">
         <div class="section-header">
             <h1 class="section-title">
-                Types of <span class="text-gradient">employees</span>
+                Types of <span class="text-gradient">calls</span>
             </h1>
-            <button class="btn-filter" id="filterEmployeesBtn">Filters</button>
+            <button class="btn-filter" id="filterCallsBtn">Filters</button>
         </div>
 
         <div class="container">
-            <div class="employees-grid" id="employeesGrid"></div>
+            <div class="calls-grid" id="callsGrid"></div>
         </div>
 
-        <!-- Filter Modal for Employees -->
-        <div class="modal-overlay" id="employeeFilterModal">
+        <!-- Filter Modal for Calls -->
+        <div class="modal-overlay" id="callFilterModal">
             <div class="modal-content">
                 <div class="modal-header">
                     <h2 class="modal-title">Filters</h2>
                 </div>
                 <div class="modal-body">
                     <div class="filter-group">
-                        <label class="filter-label">By role</label>
-                        <div class="filter-selector" data-filter="role">
-                            <span class="filter-placeholder">Choose a role</span>
+                        <label class="filter-label">By project</label>
+                        <div class="filter-selector" data-filter="project">
+                            <span class="filter-placeholder">Choose a project</span>
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                                 <path d="M6 9L12 15L18 9" stroke="#686B73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </div>
-                        <div class="filter-dropdown" id="roleFilterDropdown"></div>
+                        <div class="filter-dropdown" id="projectFilterDropdown"></div>
                     </div>
 
                     <div class="filter-group">
@@ -75,21 +75,31 @@
                         </div>
                         <div class="filter-dropdown" id="statusFilterDropdown">
                             <label class="filter-option">
-                                <input type="checkbox" name="status" value="Active">
+                                <input type="checkbox" name="status" value="scheduled">
                                 <span class="checkbox-custom"></span>
-                                <span>Active</span>
+                                <span>Scheduled</span>
                             </label>
                             <label class="filter-option">
-                                <input type="checkbox" name="status" value="Inactive">
+                                <input type="checkbox" name="status" value="in_progress">
                                 <span class="checkbox-custom"></span>
-                                <span>Inactive</span>
+                                <span>In progress</span>
+                            </label>
+                            <label class="filter-option">
+                                <input type="checkbox" name="status" value="completed">
+                                <span class="checkbox-custom"></span>
+                                <span>Completed</span>
+                            </label>
+                            <label class="filter-option">
+                                <input type="checkbox" name="status" value="cancelled">
+                                <span class="checkbox-custom"></span>
+                                <span>Cancelled</span>
                             </label>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn-cancel" id="employeeFilterCancelBtn">Cancel</button>
-                    <button class="btn-apply" id="employeeFilterApplyBtn">Apply</button>
+                    <button class="btn-cancel" id="callFilterCancelBtn">Cancel</button>
+                    <button class="btn-apply" id="callFilterApplyBtn">Apply</button>
                 </div>
             </div>
         </div>
@@ -110,24 +120,24 @@
                 <div class="admin-section">
                     <h3 class="admin-section-title">For projects</h3>
                     <div class="admin-buttons">
-                        <button class="admin-btn">
+                        <button class="admin-btn" id="addProjectAdminBtn">
                             <span>Add a project</span>
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                                 <path d="M12 5V19M5 12H19" stroke="#686B73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </button>
-                        <button class="admin-btn">
+                        <button class="admin-btn" id="exportProjectsAdminBtn">
                             <span>Export</span>
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                                 <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15M7 10L12 15M12 15L17 10M12 15V3" stroke="#686B73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </button>
-                        <button class="admin-btn">
+                        <button class="admin-btn" id="importProjectsAdminBtn">
                             <span>Import</span>
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                                 <path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 9l5-5 5 5M12 4v12" stroke="#686B73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
-                        </button> 
+                        </button>
                         <input type="file" id="csvImportInput" accept=".csv" style="display: none;">
                     </div>
                 </div>
@@ -135,7 +145,7 @@
                 <div class="admin-section">
                     <h3 class="admin-section-title">For employees</h3>
                     <div class="admin-buttons">
-                        <button class="admin-btn" id="addEmployeeBtnByAdmin">
+                        <button class="admin-btn" id="addEmployeeAdminBtn">
                             <span>Add an employee</span>
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                                 <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z" stroke="#686B73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -189,7 +199,7 @@
 
                 <div class="employee-form-group">
                     <label for="empTelegram">Telegram</label>
-                    <input type="text" id="empTelegram" placeholder="@username" class="form-input">
+                    <input type="text" id="empTelegram" placeholder="@username or phone" class="form-input">
                 </div>
 
                 <div class="employee-form-group">
@@ -264,10 +274,13 @@
                     <div class="view-value" id="viewNotes">—</div>
                 </div>
             </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-edit-employee" id="editFromViewBtn">Edit</button>
+            </div>
         </div>
     </div>
 
-   <!-- Call Modal (Add/Edit call) -->
+    <!-- Call Modal (Add/Edit call) -->
     <div class="modal-overlay" id="callModal">
         <div class="modal-content call-modal">
             <div class="modal-header">
@@ -411,12 +424,12 @@
         </div>
     </div>
 
-    <!-- Search Modal for Employees -->
-    <div class="modal-overlay" id="searchModalEmployees">
+    <!-- Search Modal for Calls -->
+    <div class="modal-overlay" id="searchModalCalls">
         <div class="modal-content search-modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">Search employees</h2>
-                <button class="modal-close" id="searchEmployeesCloseBtn">
+                <h2 class="modal-title">Search calls</h2>
+                <button class="modal-close" id="searchCallsCloseBtn">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                         <path d="M18 6L6 18M6 6L18 18" stroke="#686B73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
@@ -427,25 +440,23 @@
                     <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none">
                         <path d="M21 21L15 15M17 11C17 14.3137 14.3137 17 11 17C7.68629 17 5 14.3137 5 11C5 7.68629 7.68629 5 11 5C14.3137 5 17 7.68629 17 11Z" stroke="#686B73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
-                    <input type="text" id="searchEmployeesInput" class="search-text-input" placeholder="Search by employee name..." autocomplete="off" />
-                    <button type="button" id="searchEmployeesClearBtn" class="search-clear-btn" title="Clear search">
+                    <input type="text" id="searchCallsInput" class="search-text-input" placeholder="Search by call title or project name..." autocomplete="off" />
+                    <button type="button" id="searchCallsClearBtn" class="search-clear-btn" title="Clear search">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                             <path d="M18 6L6 18M6 6L18 18" stroke="#686B73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </button>
                 </div>
-                <p class="search-hint">Results update as you type. Press Enter to confirm and close.</p>
+                <p class="search-hint">Search by project name. Press Enter to confirm.</p>
             </div>
         </div>
     </div>
-
+    
     <script src="/scripts/employee.js"></script>
     <script src="/scripts/call.js"></script>
     <script src="/scripts/admin-modal.js"></script>
     <script src="/scripts/auth-modal.js"></script>
-    <script src="/scripts/filter-modal.js"></script>
 
-    <!-- Notification -->
     <div id="notification" class="notification hidden"></div>
 
     <!-- Custom Confirm Modal -->

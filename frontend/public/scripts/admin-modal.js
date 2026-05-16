@@ -79,7 +79,7 @@ class AdminModal {
         const exportBtn = buttons.find(btn => btn.textContent?.includes('Export'));
         const importBtn = buttons.find(btn => btn.textContent?.includes('Import'));
         const addEmployeeBtn = buttons.find(btn => btn.textContent?.includes('Add an employee'));
-        const editEmployeeBtn = buttons.find(btn => btn.textContent?.includes('Edit an employee'));
+        const addCallBtn = buttons.find(btn => btn.textContent?.includes('Add a call'));
 
         if (addProjectBtn) {
             addProjectBtn.addEventListener('click', () => {
@@ -104,11 +104,21 @@ class AdminModal {
         }
 
         if (addEmployeeBtn) {
-            addEmployeeBtn.addEventListener('click', () => this.close());
+            addEmployeeBtn.addEventListener('click', () => {
+                this.close();
+                if (typeof window.openAddEmployeeModal === 'function') {
+                    window.openAddEmployeeModal();
+                }
+            });
         }
-
-        if (editEmployeeBtn) {
-            editEmployeeBtn.addEventListener('click', () => this.close());
+        
+        if (addCallBtn) {
+            addCallBtn.addEventListener('click', () => {
+                this.close();
+                if (typeof window.openAddCallModal === 'function') {
+                    window.openAddCallModal();
+                }
+            });
         }
     }
 

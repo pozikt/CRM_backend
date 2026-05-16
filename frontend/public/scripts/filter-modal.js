@@ -99,7 +99,7 @@ class FilterModal {
         if (projects.length === 0) {
             this.projectsContainer.innerHTML = `
                 <div class="no-projects" style="grid-column:1/-1;text-align:center;padding:40px;color:#888;">
-                    Нет проектов
+                No projects found
                 </div>
             `;
             return;

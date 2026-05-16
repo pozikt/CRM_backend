@@ -231,7 +231,7 @@ body {
     font-size: 14px;
     line-height: 20px;
     color: #000000;
-    width: 80px; /* Fixed width for alignment */
+    width: 80px;
     text-align: right;
     padding-right: 12px;
 }
@@ -248,8 +248,6 @@ body {
     color: #686B73;
     text-align: center;
 }
-
-/* --- Modal Styles --- */
 
 /* --- Modal Styles --- */
 
@@ -331,9 +329,23 @@ body {
     overflow-y: auto;
 }
 
+/* Специально для модалки фильтров */
+#filterModal .modal-content {
+    overflow: visible;
+    max-height: none;
+    width: 400px;
+}
+
+#filterModal .modal-body {
+    overflow: visible;
+    max-height: none;
+    padding-bottom: 16px;
+}
+
 .filter-group {
     margin-bottom: 24px;
     position: relative;
+    overflow: visible;
 }
 
 .filter-group:last-child {
@@ -379,18 +391,20 @@ body {
 
 .filter-dropdown {
     position: absolute;
-    top: calc(100% - 10px);
+    top: calc(100% + 4px);
     left: 0;
     right: 0;
     background-color: #ffffff;
     border: 1px solid #e6e8ec;
-    border-radius: 16px;
+    border-radius: 12px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    padding: 16px;
-    z-index: 10;
+    padding: 8px;
+    z-index: 1001;
+    max-height: 200px;
+    overflow-y: auto;
     opacity: 0;
     visibility: hidden;
-    transform: translateY(-10px);
+    transform: translateY(-8px);
     transition: all 0.2s ease;
 }
 
@@ -501,6 +515,17 @@ body {
 
 .admin-modal {
     width: 400px;
+}
+
+#adminModal .modal-content {
+    max-height: none;
+    overflow: visible;
+}
+
+#adminModal .modal-body {
+    overflow: visible;
+    max-height: none;
+    padding: 24px 32px;
 }
 
 .admin-section {
@@ -812,6 +837,7 @@ body {
 .notification.hidden {
     display: none;
 }
+
 /* Стили для модального окна подтверждения */
 .confirm-modal {
     width: 400px !important;
@@ -842,7 +868,7 @@ body {
 }
 
 .notification {
-    white-space: pre-line; /* Чтобы работали переносы строк в уведомлениях */
+    white-space: pre-line;
 }
 
 /* --- Search Modal Styles --- */
