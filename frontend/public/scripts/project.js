@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     initEditProjectMode();
     initCustomSelects();
-    initAddCallButton();
     initAddEmployee();
     initDateMasks();
     initDeleteButton();
@@ -72,6 +71,8 @@ async function loadStatusesAndPriorities() {
                 <div class="custom-select__option" data-value="${e.id}">${e.full_name}</div>
             `).join('');
         }
+
+        fillEmployeeDropdowns();
     } catch (e) {
         console.error('Ошибка загрузки справочников', e);
     }
@@ -231,10 +232,17 @@ async function handleSave() {
     const managerPlaceholder = document.querySelector('.custom-select[data-select="manager"] .custom-select__placeholder');
     let manager_id = null;
     if (managerPlaceholder && managerPlaceholder.classList.contains('custom-select__value')) {
-        const managerText = managerPlaceholder.textContent;
-        const selectedManager = employeesList.find(e => e.full_name === managerText);
-        manager_id = selectedManager ? selectedManager.id : null;
+        const managerValue = parseInt(managerPlaceholder.getAttribute('data-value'), 10);
+        if (!Number.isNaN(managerValue)) {
+            manager_id = managerValue;
+        } else {
+            const managerText = managerPlaceholder.textContent;
+            const selectedManager = employeesList.find(e => e.full_name === managerText);
+            manager_id = selectedManager ? selectedManager.id : null;
+        }
     }
+
+    const employee_ids = collectSelectedProjectEmployeeIds();
 
     const payload = {
         name: projectName,
@@ -247,7 +255,8 @@ async function handleSave() {
         start_date: startDateInput ? parseDate(startDateInput.value) : null,
         deadline_date: deadlineInput ? parseDate(deadlineInput.value) : null,
         progress: progress,
-        hours: 0
+        hours: 0,
+        employee_ids: employee_ids
     };
 
     const method = isNewProject ? 'POST' : 'PUT';
@@ -340,7 +349,10 @@ async function handleSave() {
             if (managerPlaceholder && project.manager) {
                 managerPlaceholder.textContent = project.manager.full_name;
                 managerPlaceholder.classList.add('custom-select__value');
+                managerPlaceholder.setAttribute('data-value', project.manager.id);
             }
+
+            renderProjectEmployees(project.employees || []);
 
             // Даты
             const startDateInput = document.getElementById('startDate');
@@ -396,6 +408,13 @@ function initCustomSelects() {
             placeholder.textContent = text;
             placeholder.classList.add('custom-select__value');
             placeholder.setAttribute('data-value', value);
+
+            if (select.dataset.select && select.dataset.select.startsWith('employee')) {
+                const card = select.closest('.employee-card');
+                const employee = employeesList.find(e => String(e.id) === String(value));
+                if (employee && card) setEmployeeRole(card, employee.role);
+            }
+
             select.classList.remove('open');
             return;
         }
@@ -442,33 +461,109 @@ function initAddCallButton() {
     });
 }
 
+
+function buildEmployeeOptions() {
+    if (!employeesList || employeesList.length === 0) {
+        return '<div class="custom-select__option custom-select__option--empty" data-value="">Нет созданных сотрудников</div>';
+    }
+
+    return employeesList.map(employee => `
+        <div class="custom-select__option" data-value="${employee.id}">${escapeHtml(employee.full_name)}</div>
+    `).join('');
+}
+
+function fillEmployeeDropdowns() {
+    document.querySelectorAll('.custom-select[data-select^="employee"] .custom-select__dropdown').forEach(dropdown => {
+        dropdown.innerHTML = buildEmployeeOptions();
+    });
+}
+
+function setEmployeeRole(card, role) {
+    const rolePlaceholder = card.querySelector('.custom-select[data-select^="role"] .custom-select__placeholder');
+    if (!rolePlaceholder || !role) return;
+    rolePlaceholder.textContent = role;
+    rolePlaceholder.classList.add('custom-select__value');
+    rolePlaceholder.setAttribute('data-value', role);
+}
+
+function setEmployeeCardValue(card, employee) {
+    const employeePlaceholder = card.querySelector('.custom-select[data-select^="employee"] .custom-select__placeholder');
+    if (!employeePlaceholder || !employee) return;
+    employeePlaceholder.textContent = employee.full_name;
+    employeePlaceholder.classList.add('custom-select__value');
+    employeePlaceholder.setAttribute('data-value', employee.id);
+    setEmployeeRole(card, employee.role);
+}
+
+function collectSelectedProjectEmployeeIds() {
+    const ids = [];
+    const seen = new Set();
+    document.querySelectorAll('.custom-select[data-select^="employee"] .custom-select__placeholder.custom-select__value').forEach(placeholder => {
+        const id = parseInt(placeholder.getAttribute('data-value'), 10);
+        if (!Number.isNaN(id) && !seen.has(id)) {
+            seen.add(id);
+            ids.push(id);
+        }
+    });
+    return ids;
+}
+
+function createEmployeeCard(index, employee = null) {
+    const template = document.getElementById('employeeCardTemplate');
+    if (!template) return null;
+
+    const fragment = template.content.cloneNode(true);
+    const card = fragment.querySelector('.employee-card');
+    const employeeSelect = fragment.querySelector('.custom-select[data-select^="employee"]');
+    const roleSelect = fragment.querySelector('.custom-select[data-select^="role"]');
+
+    if (employeeSelect) employeeSelect.setAttribute('data-select', 'employee' + index);
+    if (roleSelect) roleSelect.setAttribute('data-select', 'role' + index);
+
+    const dropdown = fragment.querySelector('.custom-select[data-select^="employee"] .custom-select__dropdown');
+    if (dropdown) dropdown.innerHTML = buildEmployeeOptions();
+
+    if (employee && card) setEmployeeCardValue(card, employee);
+
+    return fragment;
+}
+
+function renderProjectEmployees(projectEmployees) {
+    const list = document.getElementById('employeeList');
+    if (!list) return;
+
+    const employees = projectEmployees
+        .map(item => item.employee || employeesList.find(employee => employee.id === item.employee_id))
+        .filter(Boolean);
+
+    list.innerHTML = '';
+
+    if (employees.length === 0) {
+        const emptyCard = createEmployeeCard(1);
+        if (emptyCard) list.appendChild(emptyCard);
+        return;
+    }
+
+    employees.forEach((employee, index) => {
+        const card = createEmployeeCard(index + 1, employee);
+        if (card) list.appendChild(card);
+    });
+}
+
 // Add employee — одна кнопка под последним блоком; новая карточка в конец списка, кнопка остаётся снизу
 function initAddEmployee() {
     const btn = document.getElementById('addEmployeeBtn');
     const list = document.getElementById('employeeList');
-    const template = document.getElementById('employeeCardTemplate');
 
-    if (!btn || !list || !template) return;
-
-    let nextRoleIndex = list.querySelectorAll('.employee-card').length;
+    if (!btn || !list) return;
 
     btn.addEventListener('click', function () {
         const projectDetail = document.getElementById('projectDetail');
         if (projectDetail?.getAttribute('data-edit-mode') !== 'true') return;
 
-        nextRoleIndex += 1;
-        const fragment = template.content.cloneNode(true);
-        const select = fragment.querySelector('.custom-select');
-        if (select) select.setAttribute('data-select', 'role' + nextRoleIndex);
-        list.appendChild(fragment);
-
-        const isEdit = projectDetail.getAttribute('data-edit-mode') === 'true';
-        const newCard = list.lastElementChild;
-        if (newCard) {
-            newCard.querySelectorAll('.form-input').forEach(function (inp) {
-                inp.readOnly = !isEdit;
-            });
-        }
+        const nextIndex = list.querySelectorAll('.employee-card').length + 1;
+        const fragment = createEmployeeCard(nextIndex);
+        if (fragment) list.appendChild(fragment);
     });
 }
 // Инициализация кнопки Delete
