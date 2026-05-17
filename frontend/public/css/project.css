@@ -93,6 +93,29 @@
     transform: translateY(-1px);
 }
 
+/* Delete button style */
+.btn-delete {
+    border-color: #ff4757 !important;
+    color: #ff4757 !important;
+}
+
+.btn-delete:hover {
+    border-color: #ff4757 !important;
+    color: #ff4757 !important;
+    background: rgba(255, 71, 87, 0.05) !important;
+}
+
+.btn-delete.btn-edit-project--active {
+    border-color: #ff4757 !important;
+    background: #ff4757 !important;
+    color: #ffffff !important;
+}
+
+.btn-delete.btn-edit-project--active:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
 /* Кнопка в колонке Project — как остальные поля строки (input / select), не pill */
 .btn-edit-project--in-form {
     width: 100%;
@@ -567,3 +590,5 @@
     }
 
 }
+
+
