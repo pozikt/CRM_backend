@@ -248,9 +248,24 @@ async function handleSave() {
 
     const employee_ids = collectSelectedProjectEmployeeIds();
 
+    // Собираем статусы проекта (Project statuses)
+    const projectStatuses = [];
+    const statusItems = document.querySelectorAll('.project-statuses .status-item');
+    statusItems.forEach(item => {
+        const statusName = item.querySelector('.status-name')?.textContent.trim();
+        const inputs = item.querySelectorAll('input');
+        if (statusName && inputs.length >= 2) {
+            projectStatuses.push({
+                name: statusName,
+                start: inputs[0].value.trim(),
+                end: inputs[1].value.trim()
+            });
+        }
+    });
+
     const payload = {
         name: projectName,
-        description: '',
+        description: JSON.stringify(projectStatuses),
         client_name: clientName,
         client_contact: clientContact,
         tags: typeText,
@@ -359,6 +374,29 @@ async function handleSave() {
                 managerPlaceholder.textContent = project.manager.full_name;
                 managerPlaceholder.classList.add('custom-select__value');
                 managerPlaceholder.setAttribute('data-value', project.manager.id);
+            }
+
+            // Восстановление статусов проекта из description
+            if (project.description) {
+                try {
+                    const savedStatuses = JSON.parse(project.description);
+                    if (Array.isArray(savedStatuses)) {
+                        const statusItems = document.querySelectorAll('.project-statuses .status-item');
+                        statusItems.forEach(item => {
+                            const statusName = item.querySelector('.status-name')?.textContent.trim();
+                            const saved = savedStatuses.find(s => s.name === statusName);
+                            if (saved) {
+                                const inputs = item.querySelectorAll('input');
+                                if (inputs.length >= 2) {
+                                    inputs[0].value = saved.start || '';
+                                    inputs[1].value = saved.end || '';
+                                }
+                            }
+                        });
+                    }
+                } catch (e) {
+                    console.log('Description is not JSON or invalid format');
+                }
             }
 
             renderProjectEmployees(project.employees || []);
