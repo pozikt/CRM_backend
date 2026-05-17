@@ -15,6 +15,7 @@ class Project(Base):
     start_date = Column(DateTime, nullable=True)
     deadline_date = Column(DateTime, nullable=True)
     progress = Column(Float, default=0)
+    hours = Column(Float, default=0)  # Затраченные часы
     client_name = Column(String(255), nullable=True)
     client_contact = Column(String(255), nullable=True)
     tags = Column(Text, nullable=True)  # JSON или CSV

@@ -50,6 +50,8 @@ docker-compose down
 Полная очистка (удаляет все данные БД!):
 docker-compose down -v
 
+В случае, если страница фронтенда работает некорректно нажать CTRL+F5
+
 ## Структура (кратко)
 
 - backend/ – FastAPI + SQLAlchemy + PostgreSQL

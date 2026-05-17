@@ -206,6 +206,10 @@ async function handleSave() {
     console.log('deadlineInput value:', deadlineInput?.value);
     console.log('parsed deadline:', parseDate(deadlineInput?.value));
 
+    // Прогресс
+    const progressInput = document.getElementById('projectProgress');
+    const progress = progressInput ? parseFloat(progressInput.value) || 0 : 0;
+
     const payload = {
         name: projectName,
         description: '',
@@ -216,6 +220,7 @@ async function handleSave() {
         manager_id: null,
         start_date: startDateInput ? parseDate(startDateInput.value) : null,
         deadline_date: deadlineInput ? parseDate(deadlineInput.value) : null,
+        progress: progress
     };
 
     const method = isNewProject ? 'POST' : 'PUT';
@@ -277,6 +282,10 @@ async function handleSave() {
             // № Контракта (client_name)
             const contractInput = document.getElementById('contractNumber');
             if (contractInput) contractInput.value = project.client_name || '';
+
+            // Прогресс
+            const progressInput = document.getElementById('projectProgress');
+            if (progressInput) progressInput.value = project.progress || 0;
 
             // Тип (из tags)
             const typePlaceholder = projectDetail.querySelector('.custom-select[data-select="type"] .custom-select__placeholder');
