@@ -1,9 +1,10 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 from .status import StatusOut
 from .priority import PriorityOut
 from .employee import EmployeeOut
+
 
 class ProjectBase(BaseModel):
     name: str
@@ -18,8 +19,10 @@ class ProjectBase(BaseModel):
     client_contact: Optional[str] = None
     tags: Optional[str] = None
 
+
 class ProjectCreate(ProjectBase):
-    pass
+    employee_ids: List[int] = Field(default_factory=list)
+
 
 class ProjectUpdate(BaseModel):
     name: Optional[str] = None
@@ -33,6 +36,17 @@ class ProjectUpdate(BaseModel):
     client_name: Optional[str] = None
     client_contact: Optional[str] = None
     tags: Optional[str] = None
+    employee_ids: Optional[List[int]] = None
+
+
+class ProjectEmployeeOut(BaseModel):
+    id: int
+    employee_id: int
+    employee: Optional[EmployeeOut] = None
+
+    class Config:
+        from_attributes = True
+
 
 class ProjectOut(ProjectBase):
     id: int
@@ -41,6 +55,7 @@ class ProjectOut(ProjectBase):
     status: Optional[StatusOut]
     priority: Optional[PriorityOut]
     manager: Optional[EmployeeOut]
+    employees: List[ProjectEmployeeOut] = Field(default_factory=list)
 
     class Config:
         from_attributes = True
