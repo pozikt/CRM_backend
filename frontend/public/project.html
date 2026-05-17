@@ -237,61 +237,21 @@
                         <article class="employee-card">
                             <h2 class="section-heading text-gradient employee-card__title">Employee</h2>
                             <div class="employee-block">
-                                <div class="form-field">
+                                <div class="form-field form-field--dropdown">
                                     <label class="form-label">ФИО</label>
-                                    <input type="text" class="form-input" placeholder="Enter the ФИО">
+                                    <div class="custom-select" data-select="employee1">
+                                        <span class="custom-select__placeholder">Choose employee</span>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                            <path d="M6 9L12 15L18 9" stroke="#686B73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        <div class="custom-select__dropdown employee-dropdown">
+                                            <!-- Заполнится динамически -->
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="form-field form-field--dropdown">
                                     <label class="form-label">Role</label>
                                     <div class="custom-select" data-select="role1">
-                                        <span class="custom-select__placeholder">Choosing a role</span>
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                            <path d="M6 9L12 15L18 9" stroke="#686B73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                        </svg>
-                                        <div class="custom-select__dropdown">
-                                            <div class="custom-select__option" data-value="developer">Developer</div>
-                                            <div class="custom-select__option" data-value="designer">Designer</div>
-                                            <div class="custom-select__option" data-value="manager">Manager</div>
-                                            <div class="custom-select__option" data-value="analyst">Analyst</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </article>
-                        <article class="employee-card">
-                            <h2 class="section-heading text-gradient employee-card__title">Employee</h2>
-                            <div class="employee-block">
-                                <div class="form-field">
-                                    <label class="form-label">ФИО</label>
-                                    <input type="text" class="form-input" placeholder="Enter the ФИО">
-                                </div>
-                                <div class="form-field form-field--dropdown">
-                                    <label class="form-label">Role</label>
-                                    <div class="custom-select" data-select="role2">
-                                        <span class="custom-select__placeholder">Choosing a role</span>
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                            <path d="M6 9L12 15L18 9" stroke="#686B73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                        </svg>
-                                        <div class="custom-select__dropdown">
-                                            <div class="custom-select__option" data-value="developer">Developer</div>
-                                            <div class="custom-select__option" data-value="designer">Designer</div>
-                                            <div class="custom-select__option" data-value="manager">Manager</div>
-                                            <div class="custom-select__option" data-value="analyst">Analyst</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </article>
-                        <article class="employee-card">
-                            <h2 class="section-heading text-gradient employee-card__title">Employee</h2>
-                            <div class="employee-block">
-                                <div class="form-field">
-                                    <label class="form-label">ФИО</label>
-                                    <input type="text" class="form-input" placeholder="Enter the ФИО">
-                                </div>
-                                <div class="form-field form-field--dropdown">
-                                    <label class="form-label">Role</label>
-                                    <div class="custom-select" data-select="role3">
                                         <span class="custom-select__placeholder">Choosing a role</span>
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                                             <path d="M6 9L12 15L18 9" stroke="#686B73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -320,12 +280,6 @@
             <section class="calls-section calls-section--full">
                 <h2 class="section-heading text-gradient">Calls</h2>
                 <div class="project-calls-grid" id="projectCallsGrid"></div>
-                <button class="btn-add-call" id="addCallBtn" type="button">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                        <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    <span>Add Call</span>
-                </button>
             </section>
         </div>
     </main>
@@ -334,9 +288,17 @@
         <article class="employee-card">
             <h2 class="section-heading text-gradient employee-card__title">Employee</h2>
             <div class="employee-block">
-                <div class="form-field">
+                <div class="form-field form-field--dropdown">
                     <label class="form-label">ФИО</label>
-                    <input type="text" class="form-input" placeholder="Enter the ФИО">
+                    <div class="custom-select" data-select="employee0">
+                        <span class="custom-select__placeholder">Choose employee</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <path d="M6 9L12 15L18 9" stroke="#686B73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <div class="custom-select__dropdown employee-dropdown">
+                            <!-- Заполнится динамически -->
+                        </div>
+                    </div>
                 </div>
                 <div class="form-field form-field--dropdown">
                     <label class="form-label">Role</label>
