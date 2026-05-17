@@ -2,7 +2,7 @@
 
 Проект полностью упакован в Docker. Для запуска нужен только Docker и Docker Compose.
 
-## Требования
+## Требования 
 
 - Docker (с Docker Compose)
 - Git (для клонирования)
