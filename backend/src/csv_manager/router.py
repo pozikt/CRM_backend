@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from core.database import get_db
 from models.project import Project, ProjectEmployee
 from models.employee import Employee
+from models.call import Call
 from models.status import Status
 from models.priority import Priority
 from schemas.project import ProjectCreate
@@ -19,10 +20,11 @@ async def export_projects(db: Session = Depends(get_db)):
     """
     Экспортирует все проекты с полной информацией:
     - Название, описание, статус, приоритет
-    - Прогресс
+    - Прогресс, затраченные часы
     - Клиент и контакт клиента
     - Менеджер (ответственный)
     - Дата начала и дедлайн
+    - Теги
     - Список участников проекта
     """
     projects = db.query(Project).all()
@@ -37,16 +39,19 @@ async def export_projects(db: Session = Depends(get_db)):
         "status",
         "priority",
         "progress",
+        "hours",
         "client_name",
         "client_contact",
         "manager",
         "start_date",
         "deadline_date",
+        "tags",
         "employees",
         "calls_info"
     ])
     
     for p in projects:
+      try:
         # Получаем имя менеджера
         manager_name = p.manager.full_name if p.manager else ""
         
@@ -99,6 +104,9 @@ async def export_projects(db: Session = Depends(get_db)):
             employees_str,
             calls_info_str
         ])
+      except Exception as e:
+        print(f"Error exporting project {p.id}: {e}")
+        continue
     
     output.seek(0)
     return StreamingResponse(
