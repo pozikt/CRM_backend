@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from core.database import get_db
 from models.project import Project, ProjectEmployee
 from models.employee import Employee
+from models.call import Call
 from models.status import Status
 from models.priority import Priority
 from schemas.project import ProjectCreate
@@ -25,90 +26,141 @@ async def export_projects(db: Session = Depends(get_db)):
     - Дата начала и дедлайн
     - Теги
     - Список участников проекта
+    - Информация о созвонах
     """
-    projects = db.query(Project).all()
-    
-    output = StringIO()
-    writer = csv.writer(output)
-    
-    # Заголовки
-    writer.writerow([
-        "name",
-        "description",
-        "status",
-        "priority",
-        "progress",
-        "hours",
-        "client_name",
-        "client_contact",
-        "manager",
-        "start_date",
-        "deadline_date",
-        "tags",
-        "employees",
-        "calls_info"
-    ])
-    
-    for p in projects:
-        # Получаем имя менеджера
-        manager_name = p.manager.full_name if p.manager else ""
+    try:
+        projects = db.query(Project).all()
         
-        # Получаем список участников проекта
-        employees_list = []
-        if p.employees:
-            for pe in p.employees:
-                if pe.employee:
-                    employees_list.append(f"{pe.employee.full_name} ({pe.employee.role})")
-        employees_str = "; ".join(employees_list) if employees_list else ""
+        output = StringIO()
+        # Используем lineterminator='\n' для совместимости
+        writer = csv.writer(output, lineterminator='\n')
         
-        # Форматируем даты
-        start_date_str = p.start_date.strftime("%Y-%m-%d") if p.start_date else ""
-        deadline_str = p.deadline_date.strftime("%Y-%m-%d") if p.deadline_date else ""
-        
-        # Получаем информацию о созвонах
-        calls_list = []
-        if p.calls:
-            for call in p.calls:
-                call_dt = call.scheduled_datetime.strftime("%Y-%m-%d %H:%M") if call.scheduled_datetime else "N/A"
-                call_participants = []
-                if call.participants:
-                    for cp in call.participants:
-                        if cp.employee:
-                            call_participants.append(cp.employee.full_name)
-                participants_str = ", ".join(call_participants)
-                
-                call_info = (
-                    f"[{call_dt}] {call.title or 'Call'}: "
-                    f"Link: {call.meeting_link or 'N/A'}, "
-                    f"Result: {call.result or 'No result'}, "
-                    f"Participants: {participants_str}"
-                )
-                calls_list.append(call_info)
-        calls_info_str = " | ".join(calls_list) if calls_list else ""
-        
+        # Заголовки
         writer.writerow([
-            p.name,
-            p.description or "",
-            p.status.name if p.status else "",
-            p.priority.name if p.priority else "",
-            p.progress or 0,
-            p.hours or 0,
-            p.client_name or "",
-            p.client_contact or "",
-            manager_name,
-            start_date_str,
-            deadline_str,
-            p.tags or "",
-            employees_str,
-            calls_info_str
+            "name", "description", "status", "priority", "progress", "hours", 
+            "client_name", "client_contact", "manager", "start_date", 
+            "deadline_date", "tags", "employees", "calls_info"
         ])
-    
-    output.seek(0)
-    return StreamingResponse(
-        iter([output.getvalue()]),
-        media_type="text/csv",
-        headers={"Content-Disposition": "attachment; filename=projects_export.csv"}
-    )
+        
+        for p in projects:
+            try:
+                # Безопасное получение менеджера
+                manager_name = ""
+                try:
+                    if p.manager:
+                        manager_name = p.manager.full_name
+                except:
+                    pass
+                
+                # Безопасное получение участников проекта
+                employees_list = []
+                try:
+                    if p.employees:
+                        for pe in p.employees:
+                            if pe.employee:
+                                employees_list.append(f"{pe.employee.full_name} ({pe.employee.role})")
+                except:
+                    pass
+                employees_str = "; ".join(employees_list) if employees_list else ""
+                
+                # Безопасное форматирование дат
+                start_date_str = ""
+                try:
+                    if p.start_date:
+                        start_date_str = p.start_date.strftime("%Y-%m-%d")
+                except:
+                    pass
+                    
+                deadline_str = ""
+                try:
+                    if p.deadline_date:
+                        deadline_str = p.deadline_date.strftime("%Y-%m-%d")
+                except:
+                    pass
+                
+                # Безопасное получение информации о созвонах
+                calls_list = []
+                try:
+                    if p.calls:
+                        for call in p.calls:
+                            call_dt = "N/A"
+                            try:
+                                if call.scheduled_datetime:
+                                    call_dt = call.scheduled_datetime.strftime("%Y-%m-%d %H:%M")
+                            except:
+                                pass
+                                
+                            call_participants = []
+                            try:
+                                if call.participants:
+                                    for cp in call.participants:
+                                        if cp.employee:
+                                            call_participants.append(cp.employee.full_name)
+                            except:
+                                pass
+                            participants_str = ", ".join(call_participants)
+                            
+                            call_info = (
+                                f"[{call_dt}] {call.title or 'Call'}: "
+                                f"Link: {call.meeting_link or 'N/A'}, "
+                                f"Result: {call.result or 'No result'}, "
+                                f"Participants: {participants_str}"
+                            )
+                            calls_list.append(call_info)
+                except:
+                    pass
+                calls_info_str = " | ".join(calls_list) if calls_list else ""
+                
+                # Статус и приоритет
+                status_name = ""
+                try:
+                    if p.status:
+                        status_name = p.status.name
+                except:
+                    pass
+                    
+                priority_name = ""
+                try:
+                    if p.priority:
+                        priority_name = p.priority.name
+                except:
+                    pass
+                
+                writer.writerow([
+                    p.name or "Unnamed",
+                    p.description or "",
+                    status_name,
+                    priority_name,
+                    p.progress if p.progress is not None else 0,
+                    p.hours if p.hours is not None else 0,
+                    p.client_name or "",
+                    p.client_contact or "",
+                    manager_name,
+                    start_date_str,
+                    deadline_str,
+                    p.tags or "",
+                    employees_str,
+                    calls_info_str
+                ])
+            except Exception as e:
+                # Пропускаем проект с ошибкой, чтобы не падал весь экспорт
+                print(f"Error exporting project {getattr(p, 'id', 'unknown')}: {e}")
+                continue
+        
+        content = output.getvalue()
+        output.close()
+        
+        return StreamingResponse(
+            iter([content]),
+            media_type="text/csv",
+            headers={
+                "Content-Disposition": "attachment; filename=projects_export.csv",
+                "Cache-Control": "no-cache"
+            }
+        )
+    except Exception as e:
+        print(f"Global export error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/validate")
 async def validate_projects(file: UploadFile = File(...), db: Session = Depends(get_db)):
