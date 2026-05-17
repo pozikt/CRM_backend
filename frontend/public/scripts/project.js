@@ -182,6 +182,10 @@ async function handleSave() {
     const clientInput = document.getElementById('clientNameInput');
     const clientName = clientInput ? clientInput.value.trim() : '';
 
+    // Контакт клиента
+    const clientContactInput = document.getElementById('clientContactInput');
+    const clientContact = clientContactInput ? clientContactInput.value.trim() : '';
+
     // Тип проекта (пока сохраним в поле tags)
     const typePlaceholder = projectDetail.querySelector('.custom-select[data-select="type"] .custom-select__value');
     const typeText = typePlaceholder ? typePlaceholder.textContent.trim() : '';
@@ -248,6 +252,7 @@ async function handleSave() {
         name: projectName,
         description: '',
         client_name: clientName,
+        client_contact: clientContact,
         tags: typeText,
         status_id: status_id,
         priority_id: priority_id,
@@ -318,6 +323,10 @@ async function handleSave() {
             // Клиент
             const clientInput = document.getElementById('clientNameInput');
             if (clientInput) clientInput.value = project.client_name || '';
+
+            // Контакт клиента
+            const clientContactInput = document.getElementById('clientContactInput');
+            if (clientContactInput) clientContactInput.value = project.client_contact || '';
 
             // Прогресс
             const progressInput = document.getElementById('projectProgress');
