@@ -504,3 +504,105 @@ function initDeleteButton() {
         });
     });
 }
+
+// Загрузка созвонов проекта
+async function loadProjectCalls() {
+    if (!projectId) return;
+    
+    try {
+        const response = await fetch(`/api/v1/calls?project_id=${projectId}`);
+        if (!response.ok) throw new Error('Failed to load calls');
+        
+        const calls = await response.json();
+        renderProjectCalls(calls);
+    } catch (error) {
+        console.error('Error loading project calls:', error);
+        notify.error('Ошибка при загрузке созвонов');
+    }
+}
+
+// Отображение созвонов в сетке
+function renderProjectCalls(calls) {
+    const grid = document.getElementById('projectCallsGrid');
+    if (!grid) return;
+    
+    grid.innerHTML = '';
+    
+    if (calls.length === 0) {
+        grid.innerHTML = '<div class="no-calls-message">Нет созвонов для этого проекта</div>';
+        return;
+    }
+    
+    calls.forEach(call => {
+        const card = createProjectCallCard(call);
+        grid.appendChild(card);
+    });
+}
+
+// Создание карточки созвона для проекта
+function createProjectCallCard(call) {
+    const card = document.createElement('div');
+    card.className = 'project-call-card';
+    card.dataset.id = call.id;
+    
+    let statusClass = '';
+    let statusText = '';
+    switch (call.status) {
+        case 'scheduled':
+            statusClass = 'status-scheduled';
+            statusText = 'Запланирован';
+            break;
+        case 'in_progress':
+            statusClass = 'status-in-progress';
+            statusText = 'В процессе';
+            break;
+        case 'completed':
+            statusClass = 'status-completed';
+            statusText = 'Завершен';
+            break;
+        case 'cancelled':
+            statusClass = 'status-cancelled';
+            statusText = 'Отменен';
+            break;
+    }
+    
+    const participantsText = call.participants && call.participants.length > 0 
+        ? call.participants.map(p => p.employee?.full_name || 'Unknown').join(', ')
+        : 'Нет участников';
+    
+    card.innerHTML = `
+        <div class="project-call-card__header">
+            <h3 class="project-call-card__title">${escapeHtml(call.title || 'Без названия')}</h3>
+            <span class="project-call-card__status ${statusClass}">${statusText}</span>
+        </div>
+        <div class="project-call-card__info">
+            <div class="project-call-card__datetime">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 8V12L15 15M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                ${escapeHtml(call.scheduled_datetime || '')}
+            </div>
+            ${call.duration_minutes ? `<div class="project-call-card__duration">⏱ ${call.duration_minutes} мин</div>` : ''}
+            <div class="project-call-card__participants">👥 ${escapeHtml(participantsText)}</div>
+            ${call.meeting_link ? `<div class="project-call-card__link"><a href="${escapeHtml(call.meeting_link)}" target="_blank">Ссылка на встречу</a></div>` : ''}
+        </div>
+        ${call.result ? `<div class="project-call-card__result"><strong>Результат:</strong> ${escapeHtml(call.result)}</div>` : ''}
+    `;
+    
+    return card;
+}
+
+// Вспомогательная функция для экранирования HTML
+function escapeHtml(str) {
+    if (!str) return '';
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+
+// Загрузка созвонов при загрузке проекта
+if (projectId && !isNewProject) {
+    document.addEventListener('DOMContentLoaded', async function () {
+        await loadProjectCalls();
+    });
+}
