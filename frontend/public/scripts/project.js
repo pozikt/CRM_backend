@@ -5,6 +5,7 @@ const isNewProject = urlParams.get('new') === 'true';
 const projectId = urlParams.get('id'); // для будущего редактирования
 let statusesList = [];
 let prioritiesList = [];
+let employeesList = [];
 
 document.addEventListener('DOMContentLoaded', async function () {
     // Загружаем справочники статусов и приоритетов
@@ -15,6 +16,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     initAddCallButton();
     initAddEmployee();
     initDateMasks();
+    initDeleteButton();
 
     if (isNewProject) {
         const projectDetail = document.getElementById('projectDetail');
@@ -28,17 +30,24 @@ document.addEventListener('DOMContentLoaded', async function () {
             const inputs = projectDetail.querySelectorAll('.form-input, .status-date-field input');
             inputs.forEach(input => input.readOnly = false);
         }
+        const deleteBtn = document.getElementById('deleteProjectBtn');
+        if (deleteBtn) deleteBtn.style.display = 'none';
+    } else if (projectId) {
+        const deleteBtn = document.getElementById('deleteProjectBtn');
+        if (deleteBtn) deleteBtn.style.display = 'inline-flex';
     }
 });
 
 async function loadStatusesAndPriorities() {
     try {
-        const [statusRes, priorityRes] = await Promise.all([
+        const [statusRes, priorityRes, employeeRes] = await Promise.all([
             fetch('/api/v1/statuses'),
-            fetch('/api/v1/priorities')
+            fetch('/api/v1/priorities'),
+            fetch('/api/v1/employees')
         ]);
         statusesList = await statusRes.json();
         prioritiesList = await priorityRes.json();
+        employeesList = await employeeRes.json();
 
         // Заполняем выпадающий список приоритетов (у него id="priorityDropdown")
         const priorityDropdown = document.querySelector('#priorityDropdown');
@@ -53,6 +62,14 @@ async function loadStatusesAndPriorities() {
         if (statusDropdown) {
             statusDropdown.innerHTML = statusesList.map(s => `
                 <div class="custom-select__option" data-value="${s.id}">${s.name}</div>
+            `).join('');
+        }
+
+        // Заполняем выпадающий список ответственных сотрудников
+        const managerDropdown = document.querySelector('#managerDropdown');
+        if (managerDropdown) {
+            managerDropdown.innerHTML = employeesList.map(e => `
+                <div class="custom-select__option" data-value="${e.id}">${e.full_name}</div>
             `).join('');
         }
     } catch (e) {
@@ -97,14 +114,14 @@ function applyDateMask(input) {
         if (val.length === 0) return; // пустое поле не проверяем
         
         if (val.length !== 10) {
-            alert('Дата должна быть в формате дд.мм.гггг');
+            notify.error('Дата должна быть в формате дд.мм.гггг');
             this.value = '';
             return;
         }
         
         const parts = val.split('.');
         if (parts.length !== 3) {
-            alert('Неверный формат даты');
+            notify.error('Неверный формат даты');
             this.value = '';
             return;
         }
@@ -114,14 +131,14 @@ function applyDateMask(input) {
         const year = parseInt(parts[2], 10);
         
         if (isNaN(day) || isNaN(month) || isNaN(year)) {
-            alert('Дата должна содержать только цифры');
+            notify.error('Дата должна содержать только цифры');
             this.value = '';
             return;
         }
         
         const date = new Date(year, month - 1, day);
         if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) {
-            alert('Введена несуществующая дата');
+            notify.error('Введена несуществующая дата');
             this.value = '';
         }
     });
@@ -160,9 +177,9 @@ async function handleSave() {
     const nameInput = document.getElementById('projectNameInput');
     const projectName = nameInput ? nameInput.value.trim() : 'Новый проект';
 
-    // № Контракта (сохраним как client_name)
-    const contractInput = document.getElementById('contractNumber');
-    const clientName = contractInput ? contractInput.value.trim() : '';
+    // Клиент
+    const clientInput = document.getElementById('clientNameInput');
+    const clientName = clientInput ? clientInput.value.trim() : '';
 
     // Тип проекта (пока сохраним в поле tags)
     const typePlaceholder = projectDetail.querySelector('.custom-select[data-select="type"] .custom-select__value');
@@ -210,6 +227,15 @@ async function handleSave() {
     const progressInput = document.getElementById('projectProgress');
     const progress = progressInput ? parseFloat(progressInput.value) || 0 : 0;
 
+    // Получаем выбранного менеджера
+    const managerPlaceholder = document.querySelector('.custom-select[data-select="manager"] .custom-select__placeholder');
+    let manager_id = null;
+    if (managerPlaceholder && managerPlaceholder.classList.contains('custom-select__value')) {
+        const managerText = managerPlaceholder.textContent;
+        const selectedManager = employeesList.find(e => e.full_name === managerText);
+        manager_id = selectedManager ? selectedManager.id : null;
+    }
+
     const payload = {
         name: projectName,
         description: '',
@@ -217,10 +243,11 @@ async function handleSave() {
         tags: typeText,
         status_id: status_id,
         priority_id: priority_id,
-        manager_id: null,
+        manager_id: manager_id,
         start_date: startDateInput ? parseDate(startDateInput.value) : null,
         deadline_date: deadlineInput ? parseDate(deadlineInput.value) : null,
-        progress: progress
+        progress: progress,
+        hours: 0
     };
 
     const method = isNewProject ? 'POST' : 'PUT';
@@ -245,7 +272,7 @@ async function handleSave() {
             setEditMode(false);
         }
     } catch (error) {
-        alert('Ошибка сети: ' + error.message);
+        notify.error('Ошибка сети: ' + error.message);
     }
 }
 
@@ -279,9 +306,9 @@ async function handleSave() {
             const nameInput = document.getElementById('projectNameInput');
             if (nameInput) nameInput.value = project.name;
 
-            // № Контракта (client_name)
-            const contractInput = document.getElementById('contractNumber');
-            if (contractInput) contractInput.value = project.client_name || '';
+            // Клиент
+            const clientInput = document.getElementById('clientNameInput');
+            if (clientInput) clientInput.value = project.client_name || '';
 
             // Прогресс
             const progressInput = document.getElementById('projectProgress');
@@ -306,6 +333,13 @@ async function handleSave() {
             if (priorityPlaceholder && project.priority) {
                 priorityPlaceholder.textContent = project.priority.name;
                 priorityPlaceholder.classList.add('custom-select__value');
+            }
+
+            // Ответственный
+            const managerPlaceholder = projectDetail.querySelector('.custom-select[data-select="manager"] .custom-select__placeholder');
+            if (managerPlaceholder && project.manager) {
+                managerPlaceholder.textContent = project.manager.full_name;
+                managerPlaceholder.classList.add('custom-select__value');
             }
 
             // Даты
@@ -435,5 +469,38 @@ function initAddEmployee() {
                 inp.readOnly = !isEdit;
             });
         }
+    });
+}
+// Инициализация кнопки Delete
+function initDeleteButton() {
+    const deleteBtn = document.getElementById('deleteProjectBtn');
+    if (!deleteBtn) return;
+
+    deleteBtn.addEventListener('click', async function() {
+        if (!projectId) {
+            notify.error('Невозможно удалить новый проект');
+            return;
+        }
+
+        const projectName = document.getElementById('projectNameInput')?.value || 'этот проект';
+        notify.confirm(`Вы уверены, что хотите удалить проект "${projectName}"? Это действие невозможно отменить.`, async () => {
+            try {
+                const res = await fetch(`/api/v1/projects/${projectId}`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                if (!res.ok) {
+                    const err = await res.json();
+                    notify.error('Ошибка при удалении: ' + (err.detail || 'Неизвестная ошибка'));
+                    return;
+                }
+
+                notify.success('Проект успешно удален');
+                window.location.href = '/index.html';
+            } catch (error) {
+                notify.error('Ошибка сети: ' + error.message);
+            }
+        });
     });
 }
