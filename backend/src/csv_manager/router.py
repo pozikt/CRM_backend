@@ -4,7 +4,8 @@ from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 from core.database import get_db
-from models.project import Project
+from models.project import Project, ProjectEmployee
+from models.employee import Employee
 from models.status import Status
 from models.priority import Priority
 from schemas.project import ProjectCreate
@@ -15,22 +16,88 @@ router = APIRouter(prefix="/csv", tags=["CSV Import/Export"])
 
 @router.get("/export")
 async def export_projects(db: Session = Depends(get_db)):
+    """
+    Экспортирует все проекты с полной информацией:
+    - Название, описание, статус, приоритет
+    - Прогресс
+    - Клиент и контакт клиента
+    - Менеджер (ответственный)
+    - Дата начала и дедлайн
+    - Список участников проекта
+    """
     projects = db.query(Project).all()
     
     output = StringIO()
     writer = csv.writer(output)
     
     # Заголовки
-    writer.writerow(["name", "description", "status", "priority", "progress", "client_name"])
+    writer.writerow([
+        "name",
+        "description",
+        "status",
+        "priority",
+        "progress",
+        "client_name",
+        "client_contact",
+        "manager",
+        "start_date",
+        "deadline_date",
+        "employees",
+        "calls_info"
+    ])
     
     for p in projects:
+        # Получаем имя менеджера
+        manager_name = p.manager.full_name if p.manager else ""
+        
+        # Получаем список участников проекта
+        employees_list = []
+        if p.employees:
+            for pe in p.employees:
+                if pe.employee:
+                    employees_list.append(f"{pe.employee.full_name} ({pe.employee.role})")
+        employees_str = "; ".join(employees_list) if employees_list else ""
+        
+        # Форматируем даты
+        start_date_str = p.start_date.strftime("%Y-%m-%d") if p.start_date else ""
+        deadline_str = p.deadline_date.strftime("%Y-%m-%d") if p.deadline_date else ""
+        
+        # Получаем информацию о созвонах
+        calls_list = []
+        if p.calls:
+            for call in p.calls:
+                call_dt = call.scheduled_datetime.strftime("%Y-%m-%d %H:%M") if call.scheduled_datetime else "N/A"
+                call_participants = []
+                if call.participants:
+                    for cp in call.participants:
+                        if cp.employee:
+                            call_participants.append(cp.employee.full_name)
+                participants_str = ", ".join(call_participants)
+                
+                call_info = (
+                    f"[{call_dt}] {call.title or 'Call'}: "
+                    f"Link: {call.meeting_link or 'N/A'}, "
+                    f"Result: {call.result or 'No result'}, "
+                    f"Participants: {participants_str}"
+                )
+                calls_list.append(call_info)
+        calls_info_str = " | ".join(calls_list) if calls_list else ""
+        
         writer.writerow([
-            p.name, 
-            p.description or "", 
-            p.status.name if p.status else "", 
-            p.priority.name if p.priority else "", 
-            p.progress, 
-            p.client_name or ""
+            p.name,
+            p.description or "",
+            p.status.name if p.status else "",
+            p.priority.name if p.priority else "",
+            p.progress or 0,
+            p.hours or 0,
+            p.client_name or "",
+            p.client_contact or "",
+            manager_name,
+            start_date_str,
+            deadline_str,
+            p.tags or "",
+            employees_str,
+            calls_info_str
         ])
     
     output.seek(0)
@@ -113,6 +180,9 @@ async def import_projects(file: UploadFile = File(...), db: Session = Depends(ge
     statuses_lower = {s.lower(): sid for s, sid in statuses.items()}
     priorities_lower = {p.lower(): pid for p, pid in priorities.items()}
     
+    # Кэшируем сотрудников для привязки
+    employees_by_name = {e.full_name: e.id for e in db.query(Employee).all()}
+    
     count = 0
     errors = []
     for i, row in enumerate(reader, start=2):
@@ -121,14 +191,56 @@ async def import_projects(file: UploadFile = File(...), db: Session = Depends(ge
             status_id = statuses_lower.get(row.get("status", "").lower(), 1)
             priority_id = priorities_lower.get(row.get("priority", "").lower(), 1)
             
+            # Получаем ID менеджера по имени
+            manager_name = row.get("manager", "").strip()
+            manager_id = employees_by_name.get(manager_name) if manager_name else None
+            
+            # Парсим дату начала
+            start_date = None
+            start_date_str = row.get("start_date", "").strip()
+            if start_date_str:
+                try:
+                    from datetime import datetime
+                    start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
+                except:
+                    pass
+            
+            # Парсим дедлайн
+            deadline_date = None
+            deadline_str = row.get("deadline_date", "").strip()
+            if deadline_str:
+                try:
+                    from datetime import datetime
+                    deadline_date = datetime.strptime(deadline_str, "%Y-%m-%d")
+                except:
+                    pass
+            
+            # Парсим список участников (формат: "Name1 (Role1); Name2 (Role2)")
+            employee_ids = []
+            employees_str = row.get("employees", "").strip()
+            if employees_str:
+                for emp_entry in employees_str.split(";"):
+                    emp_entry = emp_entry.strip()
+                    if emp_entry:
+                        # Извлекаем имя (до скобки)
+                        emp_name = emp_entry.split("(")[0].strip()
+                        emp_id = employees_by_name.get(emp_name)
+                        if emp_id:
+                            employee_ids.append(emp_id)
+            
             new_project_data = ProjectCreate(
                 name=row.get("name", "Unnamed Project"),
                 description=row.get("description", ""),
                 status_id=status_id,
                 priority_id=priority_id,
+                manager_id=manager_id,
                 progress=float(row.get("progress", 0)) if row.get("progress") else 0.0,
                 client_name=row.get("client_name", ""),
-                start_date=None
+                client_contact=row.get("client_contact", ""),
+                tags=row.get("tags", ""),
+                start_date=start_date,
+                deadline_date=deadline_date,
+                employee_ids=employee_ids
             )
             create_project(db, new_project_data)
             count += 1
