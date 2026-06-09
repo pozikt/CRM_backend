@@ -1,10 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from core.database import Base, engine
+from core.migrations import run_migrations
 from api.v1.endpoints import calls, employees, utils, projects, priorities, statuses
 from csv_manager.router import router as csv_router
+import models  # noqa: F401 — register all SQLAlchemy models before create_all
 
-# Создаём все таблицы
+# Обновляем схему и создаём недостающие таблицы
+run_migrations(engine)
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="CRM API", version="1.0.0")

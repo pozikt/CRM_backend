@@ -3,7 +3,7 @@ from typing import Optional
 
 class StatusBase(BaseModel):
     name: str
-    is_default: bool = False
+    is_default: Optional[bool] = False
 
 class StatusCreate(StatusBase):
     pass
