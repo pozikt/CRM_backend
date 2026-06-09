@@ -93,6 +93,29 @@
     transform: translateY(-1px);
 }
 
+/* Delete button style */
+.btn-delete {
+    border-color: #ff4757 !important;
+    color: #ff4757 !important;
+}
+
+.btn-delete:hover {
+    border-color: #ff4757 !important;
+    color: #ff4757 !important;
+    background: rgba(255, 71, 87, 0.05) !important;
+}
+
+.btn-delete.btn-edit-project--active {
+    border-color: #ff4757 !important;
+    background: #ff4757 !important;
+    color: #ffffff !important;
+}
+
+.btn-delete.btn-edit-project--active:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
 /* Кнопка в колонке Project — как остальные поля строки (input / select), не pill */
 .btn-edit-project--in-form {
     width: 100%;
@@ -568,3 +591,136 @@
 
 }
 
+
+
+
+/* Сетка созвонов проекта */
+.project-calls-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.project-call-card {
+    background: #ffffff;
+    border: 1px solid #e6e8ec;
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: all 0.3s ease;
+}
+
+.project-call-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+}
+
+.project-call-card__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.project-call-card__title {
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 20px;
+    color: #000000;
+    margin: 0;
+    flex: 1;
+}
+
+.project-call-card__status {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.project-call-card__status.status-scheduled {
+    background-color: #FFF3E0;
+    color: #ED6C02;
+}
+
+.project-call-card__status.status-in-progress {
+    background-color: #E3F2FD;
+    color: #1976D2;
+}
+
+.project-call-card__status.status-completed {
+    background-color: #E8F5E9;
+    color: #2E7D32;
+}
+
+.project-call-card__status.status-cancelled {
+    background-color: #FFEBEE;
+    color: #C62828;
+}
+
+.project-call-card__info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 13px;
+    color: #686B73;
+}
+
+.project-call-card__datetime,
+.project-call-card__duration,
+.project-call-card__participants {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.project-call-card__datetime svg,
+.project-call-card__participants svg {
+    flex-shrink: 0;
+}
+
+.project-call-card__link {
+    margin-top: 4px;
+}
+
+.project-call-card__link a {
+    color: #4F7FFF;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.project-call-card__link a:hover {
+    color: #C05BF0;
+    text-decoration: underline;
+}
+
+.project-call-card__result {
+    margin-top: 8px;
+    padding-top: 12px;
+    border-top: 1px solid #f0f0f0;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #000000;
+}
+
+.no-calls-message {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px 20px;
+    color: #686B73;
+    font-size: 14px;
+}
+
+@media (max-width: 768px) {
+    .project-calls-grid {
+        grid-template-columns: 1fr;
+    }
+}

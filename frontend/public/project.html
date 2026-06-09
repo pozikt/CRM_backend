@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/project.css">
+    <link rel="stylesheet" href="css/project-sp.css">
 </head>
 
 <body>
@@ -22,7 +23,14 @@
                 </a>
             </div>
             <div class="header__right">
+                <button type="button" class="btn-edit-project btn-delete" id="deleteProjectBtn" style="display: none;">Delete</button>
                 <button type="button" class="btn-edit-project js-edit-project-toggle" id="editProjectBtn">Edit the project</button>
+                <button type="button" class="btn-edit-project" id="openStatusPriorityBtn" title="Handbooks">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l1.72-1.34c.15-.12.19-.34.1-.51l-1.63-2.83c-.12-.22-.37-.29-.59-.22l-2.03.81c-.42-.32-.9-.6-1.44-.79l-.3-2.15c-.04-.24-.24-.41-.5-.41h-3.26c-.26 0-.46.17-.49.41l-.3 2.15c-.54.2-1.02.47-1.44.79l-2.03-.81c-.22-.09-.47 0-.59.22L2.74 8.87c-.12.22-.08.44.1.51l1.72 1.34c-.05.3-.07.62-.07.94 0 .33.02.64.07.94l-1.72 1.34c-.15.12-.19.34-.1.51l1.63 2.83c.12.22.37.29.59.22l2.03-.81c.42.32.9.6 1.44.79l.3 2.15c.04.24.24.41.5.41h3.26c.26 0 .46-.17.49-.41l.3-2.15c.54-.2 1.02-.47 1.44-.79l2.03.81c.22.09.47 0 .59-.22l1.63-2.83c.12-.22.08-.44-.1-.51l-1.72-1.34zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" fill="currentColor"/>
+                    </svg>
+                    <span>Handbooks</span>
+                </button>
             </div>
         </div>
     </header>
@@ -92,6 +100,26 @@
                     <div class="form-field">
                         <label class="form-label">Progress (%)</label>
                         <input type="number" class="form-input" id="projectProgress" placeholder="0-100" min="0" max="100">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">Client</label>
+                        <input type="text" class="form-input" id="clientNameInput" placeholder="Enter client name">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">Client Contact</label>
+                        <input type="text" class="form-input" id="clientContactInput" placeholder="Enter client contact (phone, email, etc.)">
+                    </div>
+                    <div class="form-field form-field--dropdown">
+                        <label class="form-label">Responsible</label>
+                        <div class="custom-select" data-select="manager">
+                            <span class="custom-select__placeholder">Choose responsible</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                <path d="M6 9L12 15L18 9" stroke="#686B73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <div class="custom-select__dropdown" id="managerDropdown">
+                                <!-- Заполнится динамически -->
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -213,61 +241,21 @@
                         <article class="employee-card">
                             <h2 class="section-heading text-gradient employee-card__title">Employee</h2>
                             <div class="employee-block">
-                                <div class="form-field">
+                                <div class="form-field form-field--dropdown">
                                     <label class="form-label">ФИО</label>
-                                    <input type="text" class="form-input" placeholder="Enter the ФИО">
+                                    <div class="custom-select" data-select="employee1">
+                                        <span class="custom-select__placeholder">Choose employee</span>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                            <path d="M6 9L12 15L18 9" stroke="#686B73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        <div class="custom-select__dropdown employee-dropdown">
+                                            <!-- Заполнится динамически -->
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="form-field form-field--dropdown">
                                     <label class="form-label">Role</label>
                                     <div class="custom-select" data-select="role1">
-                                        <span class="custom-select__placeholder">Choosing a role</span>
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                            <path d="M6 9L12 15L18 9" stroke="#686B73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                        </svg>
-                                        <div class="custom-select__dropdown">
-                                            <div class="custom-select__option" data-value="developer">Developer</div>
-                                            <div class="custom-select__option" data-value="designer">Designer</div>
-                                            <div class="custom-select__option" data-value="manager">Manager</div>
-                                            <div class="custom-select__option" data-value="analyst">Analyst</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </article>
-                        <article class="employee-card">
-                            <h2 class="section-heading text-gradient employee-card__title">Employee</h2>
-                            <div class="employee-block">
-                                <div class="form-field">
-                                    <label class="form-label">ФИО</label>
-                                    <input type="text" class="form-input" placeholder="Enter the ФИО">
-                                </div>
-                                <div class="form-field form-field--dropdown">
-                                    <label class="form-label">Role</label>
-                                    <div class="custom-select" data-select="role2">
-                                        <span class="custom-select__placeholder">Choosing a role</span>
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                            <path d="M6 9L12 15L18 9" stroke="#686B73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                        </svg>
-                                        <div class="custom-select__dropdown">
-                                            <div class="custom-select__option" data-value="developer">Developer</div>
-                                            <div class="custom-select__option" data-value="designer">Designer</div>
-                                            <div class="custom-select__option" data-value="manager">Manager</div>
-                                            <div class="custom-select__option" data-value="analyst">Analyst</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </article>
-                        <article class="employee-card">
-                            <h2 class="section-heading text-gradient employee-card__title">Employee</h2>
-                            <div class="employee-block">
-                                <div class="form-field">
-                                    <label class="form-label">ФИО</label>
-                                    <input type="text" class="form-input" placeholder="Enter the ФИО">
-                                </div>
-                                <div class="form-field form-field--dropdown">
-                                    <label class="form-label">Role</label>
-                                    <div class="custom-select" data-select="role3">
                                         <span class="custom-select__placeholder">Choosing a role</span>
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                                             <path d="M6 9L12 15L18 9" stroke="#686B73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -295,32 +283,7 @@
             <!-- Calls: полная ширина под колонками -->
             <section class="calls-section calls-section--full">
                 <h2 class="section-heading text-gradient">Calls</h2>
-                <div class="calls-table">
-                    <div class="calls-header">
-                        <div class="calls-col calls-col--date">Date and time</div>
-                        <div class="calls-col calls-col--link">Link to the recording/results of the call</div>
-                    </div>
-                    <div class="calls-body" id="callsBody">
-                        <div class="calls-row">
-                            <input type="text" class="form-input calls-input--date" placeholder="дд.мм.гг/чч:мм">
-                            <input type="text" class="form-input calls-input--link" placeholder="Insert the link and enter the results after completion">
-                        </div>
-                        <div class="calls-row">
-                            <input type="text" class="form-input calls-input--date" placeholder="дд.мм.гг/чч:мм">
-                            <input type="text" class="form-input calls-input--link" placeholder="Insert the link and enter the results after completion">
-                        </div>
-                        <div class="calls-row">
-                            <input type="text" class="form-input calls-input--date" placeholder="дд.мм.гг/чч:мм">
-                            <input type="text" class="form-input calls-input--link" placeholder="Insert the link and enter the results after completion">
-                        </div>
-                    </div>
-                </div>
-                <button class="btn-add-call" id="addCallBtn" type="button">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                        <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    <span>Add Call</span>
-                </button>
+                <div class="project-calls-grid" id="projectCallsGrid"></div>
             </section>
         </div>
     </main>
@@ -329,9 +292,17 @@
         <article class="employee-card">
             <h2 class="section-heading text-gradient employee-card__title">Employee</h2>
             <div class="employee-block">
-                <div class="form-field">
+                <div class="form-field form-field--dropdown">
                     <label class="form-label">ФИО</label>
-                    <input type="text" class="form-input" placeholder="Enter the ФИО">
+                    <div class="custom-select" data-select="employee0">
+                        <span class="custom-select__placeholder">Choose employee</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <path d="M6 9L12 15L18 9" stroke="#686B73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <div class="custom-select__dropdown employee-dropdown">
+                            <!-- Заполнится динамически -->
+                        </div>
+                    </div>
                 </div>
                 <div class="form-field form-field--dropdown">
                     <label class="form-label">Role</label>
@@ -352,7 +323,115 @@
         </article>
     </template>
 
+    <!-- Status and Priority Management Modal -->
+    <div class="modal-overlay" id="statusPriorityModal">
+        <div class="modal-content sp-modal-content">
+            <div class="modal-header">
+                <button type="button" class="modal-close" id="statusPriorityModalCloseBtn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body sp-modal-body">
+                <!-- Tabs -->
+                <div class="sp-tabs">
+                    <button type="button" class="sp-tab-btn sp-tab-btn--active" data-tab="statuses">Статусы</button>
+                    <button type="button" class="sp-tab-btn" data-tab="priorities">Приоритеты</button>
+                </div>
+
+                <!-- Statuses Tab -->
+                <div class="sp-tab-content sp-tab-content--active" data-tab="statuses">
+                    <div class="sp-list" id="statusList"></div>
+                    <button type="button" class="sp-btn-add" id="addStatusBtn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Priorities Tab -->
+                <div class="sp-tab-content" data-tab="priorities">
+                    <div class="sp-list" id="priorityList"></div>
+                    <button type="button" class="sp-btn-add" id="addPriorityBtn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Form Modal -->
+    <div class="modal-overlay" id="statusFormModal">
+        <div class="modal-content sp-form-modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title sp-form-title">Создать новый статус</h2>
+                <button type="button" class="modal-close" id="statusFormCloseBtn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+            <form id="statusForm" class="sp-form">
+                <div class="modal-body">
+                    <div class="form-field">
+                        <label class="form-label" for="statusName">Название статуса</label>
+                        <input type="text" id="statusName" class="form-input" placeholder="Введите название" required>
+                    </div>
+                    <div class="form-field sp-form-checkbox">
+                        <label class="sp-checkbox-label">
+                            <input type="checkbox" id="statusIsDefault">
+                            <span>По умолчанию</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" id="statusFormCancelBtn">Отмена</button>
+                    <button type="submit" class="btn-apply">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Priority Form Modal -->
+    <div class="modal-overlay" id="priorityFormModal">
+        <div class="modal-content sp-form-modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title sp-priority-form-title">Создать новый приоритет</h2>
+                <button type="button" class="modal-close" id="priorityFormCloseBtn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+            <form id="priorityForm" class="sp-form">
+                <div class="modal-body">
+                    <div class="form-field">
+                        <label class="form-label" for="priorityName">Название приоритета</label>
+                        <input type="text" id="priorityName" class="form-input" placeholder="Введите название" required>
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label" for="priorityColor">Цвет</label>
+                        <input type="color" id="priorityColor" class="form-input sp-color-input" value="#CCCCCC" required>
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label" for="priorityOrder">Порядок</label>
+                        <input type="number" id="priorityOrder" class="form-input" placeholder="0" value="0" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" id="priorityFormCancelBtn">Отмена</button>
+                    <button type="submit" class="btn-apply">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/scripts/notifications.js"></script>
     <script src="/scripts/project.js"></script>
+    <script src="/scripts/status-priority-manager.js"></script>
     
 </div>
 

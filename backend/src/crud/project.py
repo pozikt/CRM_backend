@@ -1,8 +1,38 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import and_, or_
-from models.project import Project
+from models.project import Project, ProjectEmployee
+from models.employee import Employee
 from schemas.project import ProjectCreate, ProjectUpdate
 from datetime import datetime
+
+
+def _normalize_employee_ids(employee_ids):
+    if not employee_ids:
+        return []
+    result = []
+    seen = set()
+    for employee_id in employee_ids:
+        if employee_id is None:
+            continue
+        employee_id = int(employee_id)
+        if employee_id not in seen:
+            seen.add(employee_id)
+            result.append(employee_id)
+    return result
+
+
+def _set_project_employees(db: Session, db_project: Project, employee_ids):
+    employee_ids = _normalize_employee_ids(employee_ids)
+    db.query(ProjectEmployee).filter(ProjectEmployee.project_id == db_project.id).delete(synchronize_session=False)
+
+    if not employee_ids:
+        return
+
+    existing_ids = {row[0] for row in db.query(Employee.id).filter(Employee.id.in_(employee_ids)).all()}
+    for employee_id in employee_ids:
+        if employee_id in existing_ids:
+            db.add(ProjectEmployee(project_id=db_project.id, employee_id=employee_id))
+
 
 def get_projects(db: Session, skip: int = 0, limit: int = 100, status: int = None, priority: int = None, manager_id: int = None, search: str = None):
     """
@@ -28,21 +58,30 @@ def get_projects(db: Session, skip: int = 0, limit: int = 100, status: int = Non
     
     return query.offset(skip).limit(limit).all()
 
+
 def get_project(db: Session, project_id: int):
     """
     Получить проект по ID
     """
     return db.query(Project).filter(Project.id == project_id).first()
 
+
 def create_project(db: Session, project: ProjectCreate):
     """
     Создать новый проект
     """
-    db_project = Project(**project.model_dump())
+    project_data = project.model_dump()
+    employee_ids = project_data.pop('employee_ids', [])
+    db_project = Project(**project_data)
     db.add(db_project)
     db.commit()
     db.refresh(db_project)
+
+    _set_project_employees(db, db_project, employee_ids)
+    db.commit()
+    db.refresh(db_project)
     return db_project
+
 
 def update_project(db: Session, project_id: int, project_update: ProjectUpdate):
     """
@@ -52,11 +91,15 @@ def update_project(db: Session, project_id: int, project_update: ProjectUpdate):
     if not db_project:
         return None
     update_data = project_update.model_dump(exclude_unset=True)
+    employee_ids = update_data.pop('employee_ids', None)
     for field, value in update_data.items():
         setattr(db_project, field, value)
+    if employee_ids is not None:
+        _set_project_employees(db, db_project, employee_ids)
     db.commit()
     db.refresh(db_project)
     return db_project
+
 
 def delete_project(db: Session, project_id: int):
     """
@@ -69,11 +112,13 @@ def delete_project(db: Session, project_id: int):
     db.commit()
     return True
 
+
 def get_projects_by_status(db: Session, status_id: int, skip: int = 0, limit: int = 100):
     """
     Получить проекты с определенным статусом
     """
     return db.query(Project).filter(Project.status_id == status_id).offset(skip).limit(limit).all()
+
 
 def get_projects_by_priority(db: Session, priority_id: int, skip: int = 0, limit: int = 100):
     """
@@ -81,11 +126,13 @@ def get_projects_by_priority(db: Session, priority_id: int, skip: int = 0, limit
     """
     return db.query(Project).filter(Project.priority_id == priority_id).offset(skip).limit(limit).all()
 
+
 def get_projects_by_manager(db: Session, manager_id: int, skip: int = 0, limit: int = 100):
     """
     Получить проекты, назначенные конкретному менеджеру
     """
     return db.query(Project).filter(Project.manager_id == manager_id).offset(skip).limit(limit).all()
+
 
 def update_project_status(db: Session, project_id: int, status_id: int):
     """
@@ -99,6 +146,7 @@ def update_project_status(db: Session, project_id: int, status_id: int):
     db.refresh(db_project)
     return db_project
 
+
 def update_project_priority(db: Session, project_id: int, priority_id: int):
     """
     Обновить приоритет проекта
@@ -110,6 +158,7 @@ def update_project_priority(db: Session, project_id: int, priority_id: int):
     db.commit()
     db.refresh(db_project)
     return db_project
+
 
 def update_project_manager(db: Session, project_id: int, manager_id: int):
     """
@@ -123,6 +172,7 @@ def update_project_manager(db: Session, project_id: int, manager_id: int):
     db.refresh(db_project)
     return db_project
 
+
 def update_project_progress(db: Session, project_id: int, progress: float):
     """
     Обновить процент выполнения проекта
@@ -134,6 +184,7 @@ def update_project_progress(db: Session, project_id: int, progress: float):
     db.commit()
     db.refresh(db_project)
     return db_project
+
 
 def update_project_hours(db: Session, project_id: int, hours: float):
     """
@@ -150,6 +201,7 @@ def update_project_hours(db: Session, project_id: int, hours: float):
     db.refresh(db_project)
     return db_project
 
+
 def search_projects(db: Session, text: str, skip: int = 0, limit: int = 100):
     """
     Поиск проектов по названию или названию клиента
@@ -160,6 +212,7 @@ def search_projects(db: Session, text: str, skip: int = 0, limit: int = 100):
             Project.client_name.ilike(f"%{text}%")
         )
     ).offset(skip).limit(limit).all()
+
 
 def get_projects_by_deadline(db: Session, date_str: str, skip: int = 0, limit: int = 100):
     """
@@ -174,6 +227,7 @@ def get_projects_by_deadline(db: Session, date_str: str, skip: int = 0, limit: i
         Project.deadline_date >= deadline_date
     ).offset(skip).limit(limit).all()
 
+
 def get_project_meetings(db: Session, project_id: int):
     """
     Получить список совещаний/встреч проекта
@@ -184,6 +238,7 @@ def get_project_meetings(db: Session, project_id: int):
         "project_id": project_id,
         "meetings": []
     }
+
 
 def get_project_summary(db: Session, project_id: int):
     """
@@ -205,6 +260,7 @@ def get_project_summary(db: Session, project_id: int):
         "client_name": db_project.client_name,
         "description": db_project.description
     }
+
 
 def get_project_timeline(db: Session, project_id: int):
     """
