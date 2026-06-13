@@ -1,0 +1,61 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: crm_db
+    restart: always
+    environment:
+      POSTGRES_USER: crm_user
+      POSTGRES_PASSWORD: crm_pass
+      POSTGRES_DB: crm_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U crm_user -d crm_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: deploy/Dockerfile
+    container_name: crm_backend
+    restart: always
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    environment:
+      DATABASE_URL: postgresql://crm_user:crm_pass@db:5432/crm_db
+      JWT_SECRET: ${JWT_SECRET:-crm-dev-secret-change-me}
+      DEFAULT_ADMIN_LOGIN: ${DEFAULT_ADMIN_LOGIN:-admin}
+      DEFAULT_ADMIN_PASSWORD: ${DEFAULT_ADMIN_PASSWORD:-admin123}
+      DEFAULT_ADMIN_EMAIL: ${DEFAULT_ADMIN_EMAIL:-admin@crm.local}
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      sh -c "
+        echo 'Waiting for PostgreSQL...';
+        sleep 5;
+        echo 'Starting FastAPI with auto-reload...';
+        uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
+      "
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: deploy/Dockerfile
+    container_name: crm_frontend
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend/public:/usr/share/nginx/html:ro
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:

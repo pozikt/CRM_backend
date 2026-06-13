@@ -1,0 +1,31 @@
+# Уже должны быть
+node_modules/
+dist/
+.env
+*.Zone.Identifier
+
+# Windows мусор
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+.pytest_cache/
+.mypy_cache/.env
+*.db
+uploads/
+venv/

@@ -1,0 +1,368 @@
+/* Status and Priority Manager Styles - Minimalist Design */
+
+/* Modal content sizing */
+.sp-modal-content {
+    width: 520px;
+    max-width: 90%;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.sp-form-modal-content {
+    width: 480px;
+    max-width: 90%;
+}
+
+/* Modal header - minimal */
+.sp-modal-content .modal-header {
+    padding: 16px 24px;
+    border-bottom: none;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.sp-modal-content .modal-close {
+    width: 32px;
+    height: 32px;
+    margin: 0;
+}
+
+/* Modal body adjustments */
+.sp-modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Tabs - icon only */
+.sp-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid #e6e8ec;
+    padding: 0 24px;
+    flex-shrink: 0;
+}
+
+.sp-tab-btn {
+    flex: 1;
+    padding: 16px 0;
+    border: none;
+    background: none;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    color: #686B73;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+    position: relative;
+    bottom: -1px;
+    min-height: 52px;
+    text-align: center;
+}
+
+.sp-tab-btn:hover {
+    color: #C05BF0;
+}
+
+.sp-tab-btn--active {
+    color: #000000;
+    border-bottom-color: #C05BF0;
+}
+
+/* Tab content */
+.sp-tab-content {
+    display: none;
+    padding: 24px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.sp-tab-content--active {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Items list */
+.sp-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex: 1;
+}
+
+.sp-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: #F9FAFB;
+    border: 1px solid #e6e8ec;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+}
+
+.sp-item:hover {
+    background: #ffffff;
+    border-color: #C05BF0;
+    box-shadow: 0 2px 8px rgba(192, 91, 240, 0.1);
+}
+
+.sp-item__content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+}
+
+.sp-item__color-box {
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+    border: 1px solid #e6e8ec;
+    flex-shrink: 0;
+}
+
+.sp-item__info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    flex: 1;
+}
+
+.sp-item__name {
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    color: #000000;
+    word-break: break-word;
+}
+
+.sp-item__order {
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+    color: #686B73;
+}
+
+.sp-item__meta {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.sp-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    background: linear-gradient(90deg, #C05BF0 0%, #4F7FFF 100%);
+    color: #ffffff;
+    border-radius: 999px;
+    font-weight: 500;
+    font-size: 11px;
+    line-height: 14px;
+}
+
+.sp-item__actions {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+    margin-left: 12px;
+}
+
+.sp-btn-edit,
+.sp-btn-delete {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid #e6e8ec;
+    background: #ffffff;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #686B73;
+    transition: all 0.2s ease;
+    padding: 0;
+}
+
+.sp-btn-edit:hover {
+    border-color: #C05BF0;
+    color: #C05BF0;
+    background: #F9FAFB;
+}
+
+.sp-btn-delete:hover {
+    border-color: #ff4757;
+    color: #ff4757;
+    background: #fff5f5;
+}
+
+.sp-btn-edit svg,
+.sp-btn-delete svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    fill: none;
+}
+
+/* Add button */
+.sp-btn-add {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px dashed #e6e8ec;
+    background: transparent;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    color: #686B73;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: auto;
+}
+
+.sp-btn-add:hover {
+    border-color: #C05BF0;
+    color: #C05BF0;
+    background: #F9FAFB;
+}
+
+.sp-btn-add svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    fill: none;
+}
+
+/* Form styles */
+.sp-form {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.sp-form .modal-body {
+    padding: 24px 32px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.sp-form .modal-footer {
+    padding: 24px 32px;
+    border-top: 1px solid #e6e8ec;
+    flex-shrink: 0;
+}
+
+.sp-form-checkbox {
+    margin-top: 16px;
+}
+
+.sp-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    color: #000000;
+}
+
+.sp-checkbox-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #C05BF0;
+}
+
+.sp-color-input {
+    height: 44px;
+    padding: 4px;
+    cursor: pointer;
+}
+
+.sp-color-input::-webkit-color-swatch-wrapper {
+    padding: 2px;
+}
+
+.sp-color-input::-webkit-color-swatch {
+    border: 1px solid #e6e8ec;
+    border-radius: 6px;
+}
+
+/* Form modal header */
+.sp-form-modal-content .modal-header {
+    padding: 24px 32px;
+    border-bottom: 1px solid #e6e8ec;
+}
+
+.sp-form-modal-content .modal-title {
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 26px;
+    color: #000000;
+}
+
+/* Scrollbar styling */
+.sp-modal-body::-webkit-scrollbar,
+.sp-tab-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sp-modal-body::-webkit-scrollbar-track,
+.sp-tab-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sp-modal-body::-webkit-scrollbar-thumb,
+.sp-tab-content::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 3px;
+}
+
+.sp-modal-body::-webkit-scrollbar-thumb:hover,
+.sp-tab-content::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .sp-modal-content {
+        width: 100%;
+        max-height: 90vh;
+    }
+
+    .sp-form-modal-content {
+        width: 100%;
+    }
+
+    .sp-item {
+        padding: 10px 12px;
+    }
+
+    .sp-item__name {
+        font-size: 13px;
+    }
+
+    .sp-btn-edit,
+    .sp-btn-delete {
+        width: 28px;
+        height: 28px;
+    }
+
+    .sp-btn-edit svg,
+    .sp-btn-delete svg {
+        width: 14px;
+        height: 14px;
+    }
+}
