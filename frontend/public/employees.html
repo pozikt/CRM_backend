@@ -439,6 +439,81 @@
         </div>
     </div>
 
+    <!-- Popup Auth -->
+    <div class="popup-overlay hidden" id="popupOverlay">
+        <div class="popup-container">
+            <button class="close-btn" id="closePopupBtn">&times;</button>
+            <div id="loginScreen">
+                <h2 id="popup-title">Добро пожаловать!</h2>
+                <p class="subtitle" id="popup-desc">Войдите, чтобы продолжить</p>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="email">Email или логин</label>
+                        <input type="text" id="email" placeholder="Введите email или логин" autocomplete="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Пароль</label>
+                        <input type="password" id="password" placeholder="Введите пароль" autocomplete="current-password">
+                    </div>
+                    <div class="form-options">
+                        <label class="remember">
+                            <input type="checkbox"> Запомнить меня
+                        </label>
+                        <a href="#" id="forgotLink" class="forgot-link">Забыли пароль?</a>
+                    </div>
+                    <div id="loginError" class="error-message hidden"></div>
+                    <button type="submit" id="loginSubmitBtn" class="login-submit">Войти</button>
+                    <div class="register-link">
+                        Нет аккаунта? <a href="#" id="registerLink">Зарегистрироваться</a>
+                    </div>
+                </form>
+            </div>
+            <div id="registerScreen" class="hidden">
+                <h2>Создать аккаунт</h2>
+                <p class="subtitle">Заполните данные для регистрации</p>
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="regName">Имя</label>
+                        <input type="text" id="regName" placeholder="Введите имя">
+                    </div>
+                    <div class="form-group">
+                        <label for="regEmail">Email</label>
+                        <input type="email" id="regEmail" placeholder="example@mail.ru">
+                    </div>
+                    <div class="form-group">
+                        <label for="regPassword">Пароль</label>
+                        <input type="password" id="regPassword" placeholder="Минимум 6 символов">
+                    </div>
+                    <div class="form-group">
+                        <label for="regConfirm">Подтверждение пароля</label>
+                        <input type="password" id="regConfirm" placeholder="Повторите пароль">
+                    </div>
+                    <div id="registerError" class="error-message hidden"></div>
+                    <button type="submit" id="registerSubmitBtn" class="login-submit">Зарегистрироваться</button>
+                    <div class="register-link">
+                        Уже есть аккаунт? <a href="#" id="backToLoginFromRegister">Войти</a>
+                    </div>
+                </form>
+            </div>
+            <div id="forgotScreen" class="hidden">
+                <h2>Восстановление пароля</h2>
+                <p class="subtitle">Мы отправим ссылку на ваш email</p>
+                <form id="forgotForm">
+                    <div class="form-group">
+                        <label for="forgotEmail">Email</label>
+                        <input type="email" id="forgotEmail" placeholder="example@mail.ru">
+                    </div>
+                    <div id="forgotError" class="error-message hidden"></div>
+                    <button type="submit" id="forgotSubmitBtn" class="login-submit">Отправить</button>
+                    <div class="register-link">
+                        <a href="#" id="backToLoginFromForgot">Вернуться к входу</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="/scripts/auth.js"></script>
     <script src="/scripts/employee.js"></script>
     <script src="/scripts/call.js"></script>
     <script src="/scripts/admin-modal.js"></script>

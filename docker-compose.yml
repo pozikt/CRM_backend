@@ -29,6 +29,10 @@ services:
       - ./backend:/app
     environment:
       DATABASE_URL: postgresql://crm_user:crm_pass@db:5432/crm_db
+      JWT_SECRET: ${JWT_SECRET:-crm-dev-secret-change-me}
+      DEFAULT_ADMIN_LOGIN: ${DEFAULT_ADMIN_LOGIN:-admin}
+      DEFAULT_ADMIN_PASSWORD: ${DEFAULT_ADMIN_PASSWORD:-admin123}
+      DEFAULT_ADMIN_EMAIL: ${DEFAULT_ADMIN_EMAIL:-admin@crm.local}
     depends_on:
       db:
         condition: service_healthy

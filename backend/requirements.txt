@@ -18,3 +18,5 @@ typing-inspection==0.4.2
 uvicorn==0.42.0
 python-dotenv==1.0.0
 python-multipart==0.0.9
+python-jose[cryptography]==3.3.0
+bcrypt==4.2.1

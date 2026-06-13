@@ -615,6 +615,22 @@ body {
     display: none !important;
 }
 
+.popup-overlay.auth-required {
+    cursor: default;
+}
+
+body.app-locked {
+    overflow: hidden;
+}
+
+body.app-locked .popup-overlay {
+    pointer-events: auto;
+}
+
+body.app-locked #notification {
+    pointer-events: auto;
+}
+
 .popup-container {
     background: white;
     width: 90%;

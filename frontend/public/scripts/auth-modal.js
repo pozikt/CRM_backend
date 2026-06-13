@@ -26,9 +26,9 @@ class AuthModal {
     popupDesc;
     errorTimeout = null;
     isInitialized = false;
+    isAuthenticated = false;
 
     constructor() {
-        console.log('AuthModal constructor called');
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => this.init());
         } else {
@@ -36,8 +36,7 @@ class AuthModal {
         }
     }
 
-    init() {
-        console.log('AuthModal init started');
+    async init() {
         try {
             this.overlay = document.getElementById('popupOverlay');
             this.closeBtn = document.getElementById('closePopupBtn');
@@ -45,7 +44,6 @@ class AuthModal {
                 console.warn('AuthModal: popup elements not found, skipping');
                 return;
             }
-            console.log('Elements found successfully');
 
             this.screens = {
                 login: document.getElementById('loginScreen'),
@@ -78,25 +76,59 @@ class AuthModal {
             this.popupDesc = document.getElementById('popup-desc');
 
             this.setupEventListeners();
-            setTimeout(() => this.openPopup(), 100);
+            await this.bootstrapSession();
             this.isInitialized = true;
-            console.log('AuthModal initialized successfully');
         } catch (error) {
             console.error('Error initializing AuthModal:', error);
         }
     }
 
+    async bootstrapSession() {
+        if (window.Auth?.isAuthenticated()) {
+            const valid = await window.Auth.verifyToken();
+            if (valid) {
+                this.isAuthenticated = true;
+                this.setModalLocked(false);
+                this.closePopup();
+                return;
+            }
+            window.Auth.clearToken();
+        }
+
+        this.isAuthenticated = false;
+        this.setModalLocked(true);
+        this.openPopup();
+    }
+
     setupEventListeners() {
         if (!this.overlay || !this.closeBtn) return;
 
-        this.closeBtn.addEventListener('click', () => this.closePopup());
-        this.overlay.addEventListener('click', (e) => {
-            if (e.target === this.overlay) this.closePopup();
+        this.closeBtn.addEventListener('click', () => {
+            if (this.isAuthenticated) this.closePopup();
         });
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && this.overlay && !this.overlay.classList.contains('hidden')) {
+
+        this.overlay.addEventListener('click', (e) => {
+            if (e.target === this.overlay && this.isAuthenticated) {
                 this.closePopup();
             }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (
+                e.key === 'Escape' &&
+                this.overlay &&
+                !this.overlay.classList.contains('hidden') &&
+                this.isAuthenticated
+            ) {
+                this.closePopup();
+            }
+        });
+
+        window.addEventListener('auth:required', () => {
+            this.isAuthenticated = false;
+            this.setModalLocked(true);
+            this.openPopup();
+            this.showNotification('Сессия истекла. Войдите снова.', 'info');
         });
 
         if (this.registerLink) {
@@ -162,6 +194,17 @@ class AuthModal {
         });
     }
 
+    setModalLocked(locked) {
+        if (!this.overlay) return;
+
+        this.overlay.classList.toggle('auth-required', locked);
+        document.body.classList.toggle('app-locked', locked);
+
+        if (this.closeBtn) {
+            this.closeBtn.style.display = locked ? 'none' : '';
+        }
+    }
+
     updateAriaLabels(screen) {
         if (!this.popupTitle || !this.popupDesc) return;
         if (screen === this.screens?.login) {
@@ -219,16 +262,14 @@ class AuthModal {
 
     openPopup() {
         if (!this.overlay) return;
-        console.log('Opening popup, current classes:', this.overlay.className);
         this.overlay.classList.remove('hidden');
         this.overlay.setAttribute('aria-hidden', 'false');
         if (this.screens) this.showScreen(this.screens.login);
         document.body.style.overflow = 'hidden';
-        console.log('Popup opened, classes after:', this.overlay.className);
     }
 
     closePopup() {
-        if (!this.overlay) return;
+        if (!this.overlay || !this.isAuthenticated) return;
         this.overlay.classList.add('hidden');
         this.overlay.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
@@ -244,7 +285,8 @@ class AuthModal {
 
     async handleLogin(e) {
         e.preventDefault();
-        if (!this.emailInput || !this.passwordInput || !this.loginSubmitBtn || !this.errors) return;
+        if (!this.emailInput || !this.passwordInput || !this.loginSubmitBtn || !this.errors || !window.Auth) return;
+
         const email = this.emailInput.value.trim();
         const password = this.passwordInput.value.trim();
         if (!email || !password) {
@@ -265,16 +307,18 @@ class AuthModal {
             this.showError(this.errors.login, 'Введите логин (от 2 символов) или email');
             return;
         }
+
         this.loginSubmitBtn.disabled = true;
         this.loginSubmitBtn.textContent = 'Вход...';
         try {
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            console.log('Успешный вход:', { login });
+            await window.Auth.login(login, password);
+            this.isAuthenticated = true;
+            this.setModalLocked(false);
             this.showNotification('Вход выполнен успешно!', 'success');
             this.closePopup();
         } catch (error) {
-            this.showError(this.errors.login, 'Ошибка при входе');
-            console.error(error);
+            const message = error instanceof Error ? error.message : 'Ошибка при входе';
+            this.showError(this.errors.login, message);
         } finally {
             if (this.loginSubmitBtn) {
                 this.loginSubmitBtn.disabled = false;
@@ -286,7 +330,8 @@ class AuthModal {
     async handleRegister(e) {
         e.preventDefault();
         if (!this.regName || !this.regEmail || !this.regPassword || !this.regConfirm ||
-            !this.registerSubmitBtn || !this.errors) return;
+            !this.registerSubmitBtn || !this.errors || !window.Auth) return;
+
         const name = this.regName.value.trim();
         const email = this.regEmail.value.trim();
         const password = this.regPassword.value.trim();
@@ -307,18 +352,18 @@ class AuthModal {
             this.showError(this.errors.register, 'Введите корректный email');
             return;
         }
+
         this.registerSubmitBtn.disabled = true;
         this.registerSubmitBtn.textContent = 'Регистрация...';
         try {
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            console.log('Регистрация:', { name, email });
+            await window.Auth.register(name, email, password);
+            this.isAuthenticated = true;
+            this.setModalLocked(false);
             this.showNotification('Регистрация прошла успешно!', 'success');
-            if (this.emailInput) this.emailInput.value = email;
-            if (this.screens) this.showScreen(this.screens.login);
-            if (this.registerForm) this.registerForm.reset();
+            this.closePopup();
         } catch (error) {
-            this.showError(this.errors.register, 'Ошибка при регистрации');
-            console.error(error);
+            const message = error instanceof Error ? error.message : 'Ошибка при регистрации';
+            this.showError(this.errors.register, message);
         } finally {
             if (this.registerSubmitBtn) {
                 this.registerSubmitBtn.disabled = false;
@@ -342,9 +387,8 @@ class AuthModal {
         this.forgotSubmitBtn.disabled = true;
         this.forgotSubmitBtn.textContent = 'Отправка...';
         try {
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            console.log('Восстановление пароля для:', email);
-            this.showNotification('Ссылка для сброса пароля отправлена', 'info');
+            await new Promise(resolve => setTimeout(resolve, 800));
+            this.showNotification('Восстановление пароля пока недоступно', 'info');
             if (this.screens) this.showScreen(this.screens.login);
             if (this.forgotForm) this.forgotForm.reset();
         } catch (error) {
@@ -359,5 +403,4 @@ class AuthModal {
     }
 }
 
-console.log('Creating AuthModal instance');
 new AuthModal();
